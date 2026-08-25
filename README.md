@@ -1,10 +1,10 @@
 # Designing a Personal AI Harness
 
-> **You're on `step-4-tiered-permissions`** — step 4 of a 6-step build.
-> Tools now run through a tier map: safe / confirm / blocked. The harness
-> decides what's allowed, not the model. See the full progression table on
+> **You're on `step-5-persistent-memory`** — step 5 of a 6-step build. A
+> flat `memory.json` file now survives the process exiting — quit and
+> restart, and it still remembers. See the full progression table on
 > [`main`](https://github.com/iambharathpadhu/react-blr-harness-talk#the-6-step-build)
-> or jump to what's next: `git checkout step-5-persistent-memory`.
+> or jump to the finished harness: `git checkout main`.
 
 A from-scratch, ~250-line agent harness built for a live conference talk. No
 frameworks, no cloud API keys — everything runs against a local model via

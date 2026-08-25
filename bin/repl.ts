@@ -1,20 +1,29 @@
 #!/usr/bin/env node
-// STEP 4: runTurn now needs the readline interface too, so it can pause and
-// ask before a confirm-tier tool runs. It's the same `rl` this file already
-// owns for the "you>" prompt — passed through, not duplicated. Two readline
-// interfaces reading the same stdin would fight each other for input.
+// STEP 5: read memory.ts's recall() once at startup and hand it to the
+// system prompt. Quit with 'exit', run this again, and whatever was
+// remembered is still there — a genuinely separate process, reading state
+// that survived the first one exiting.
 
 import readline from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 import type { ChatMessage } from "../harness/model.js";
 import { runTurn } from "../harness/runtime.js";
+import { recall } from "../harness/memory.js";
 import { systemPrompt } from "../harness/system-prompt.js";
 import { ui } from "../harness/ui.js";
 
 async function main() {
-  const messages: ChatMessage[] = [{ role: "system", content: systemPrompt() }];
+  const knownFacts = recall();
+  const messages: ChatMessage[] = [{ role: "system", content: systemPrompt(knownFacts) }];
 
-  console.log(ui.banner("harness-demo · step 4 · tiered permissions"));
+  console.log(ui.banner("harness-demo · step 5 · persistent memory"));
+  console.log(
+    ui.dim(
+      knownFacts.length
+        ? `recalled ${knownFacts.length} fact(s) from a previous session`
+        : "no saved memory yet"
+    )
+  );
   console.log(ui.dim("type 'exit' to quit") + "\n");
 
   const rl = readline.createInterface({ input: stdin, output: stdout });

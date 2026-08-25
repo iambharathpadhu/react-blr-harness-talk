@@ -1,14 +1,10 @@
-// STEP 4: same tools as step 3. What's new is tierOf below — the harness,
-// not the model, deciding what each tool is allowed to do. The model still
-// has no vote on this: it can ask for anything, but whether that ask
-// becomes a real action is a policy lookup, not a capability question.
-//
-// resolveInSandbox is unchanged from step 3 — containment (can this path
-// ever be touched) and permission (should THIS call be allowed right now)
-// are different concerns, and tiers only add the second one.
+// STEP 5: two new tools — remember_fact and recall_memory — both "safe"
+// tier, both thin wrappers around harness/memory.ts. Everything else here
+// is unchanged from step 4.
 
 import fs from "node:fs";
 import path from "node:path";
+import { recall, remember } from "./memory.js";
 
 const SANDBOX = path.resolve(process.cwd(), "sandbox");
 fs.mkdirSync(SANDBOX, { recursive: true });
@@ -26,6 +22,8 @@ export type Tier = "safe" | "confirm" | "blocked";
 export const tierOf: Record<string, Tier> = {
   list_files: "safe",
   read_file: "safe",
+  recall_memory: "safe",
+  remember_fact: "safe",
   write_file: "confirm",
   delete_file: "blocked",
 };
@@ -78,6 +76,27 @@ export const toolSchemas = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "remember_fact",
+      description:
+        "Save a durable fact about the user that should still be true in a future session.",
+      parameters: {
+        type: "object",
+        properties: { fact: { type: "string" } },
+        required: ["fact"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "recall_memory",
+      description: "Retrieve facts saved about the user in previous sessions.",
+      parameters: { type: "object", properties: {} },
+    },
+  },
 ];
 
 export async function runTool(name: string, args: Record<string, unknown>): Promise<string> {
@@ -94,6 +113,11 @@ export async function runTool(name: string, args: Record<string, unknown>): Prom
     case "delete_file":
       fs.unlinkSync(resolveInSandbox(String(args.path)));
       return `Deleted ${args.path}`;
+    case "remember_fact":
+      remember(String(args.fact));
+      return "Saved to memory.";
+    case "recall_memory":
+      return recall().join("\n") || "(no memories yet)";
     default:
       return `Unknown tool: ${name}`;
   }
