@@ -57,9 +57,27 @@ Barath · ReactJS Bangalore · React Meetup #108
 
 ---
 
-## Cold open (3-4 min)
+## Cold open (4-5 min)
 
-**Say:**
+### Ask the room first — don't just tell them
+
+**Say, and actually wait for a response:**
+
+> "Quick show of hands before I say anything else — who's confident they
+> could define what an 'AI harness' is, beyond 'the thing that wraps the
+> model'?"
+
+Whatever you get — a few hands, blank stares, someone shouts a decent
+definition from the back — use it. If hands go up, ask one person to say it
+out loud and react honestly ("yeah, that's most of it" / "close, there's one
+piece missing"). If nobody moves, that's fine too:
+
+> "That's normal — it's one of those terms everyone's absorbed by osmosis
+> without anyone actually defining it. So let's define it properly, and then
+> we're going to build one live so it's not just a definition you forget by
+> lunch."
+
+**Then the frame:**
 
 > "Everyone in this room has done this: you get API access to an LLM, you give
 > it a couple of tools, you wire up a loop. It works. It feels like magic.
@@ -75,6 +93,15 @@ tools). Then say the line that frames the whole talk:
 > it. That's the harness. That's the talk."
 
 **Slide:** the analogy table, engine/car/tools rows only.
+
+### Tell them what's about to happen
+
+**Say:**
+
+> "I could just tell you the four things a harness needs and move on. Instead
+> we're going to build a real one, live, from nothing — so by the end you
+> don't just know the definition, you've watched it get built piece by piece,
+> and you've seen it break before each piece existed."
 
 ### Prove it's not calling out to anyone (1 min, right after the analogy)
 
@@ -150,6 +177,13 @@ npm run demo:brittle
 > "That's an engine sitting on a skateboard. It moves. You would not drive it
 > down MG Road, and you definitely wouldn't let it drive *itself*."
 
+**Real harness check:**
+
+> "If this looks familiar, it should — this is exactly the failure mode that
+> made Claude Code, Codex, and every other coding agent necessary in the
+> first place. Nobody ships the raw skateboard. The next four acts are
+> literally the four things those tools had to build on top of it."
+
 ---
 
 ## Act 2 — Installing the Safety Systems (6-8 min)
@@ -196,6 +230,17 @@ outside the sandbox (`../../etc/hosts`) — show the harness throwing instead
 of leaking a path traversal. "The car has a curb it physically can't drive
 over, no matter what the engine wants."
 
+**Real harness check:**
+
+> "This isn't a toy pattern — it's the exact shape of Claude Code's and
+> Codex's permission systems today. Reading files, running tests, listing a
+> directory — that just happens. Editing a file or running a shell command
+> asks you first, unless you've explicitly told it to auto-accept. And
+> certain things — force-pushing over main, some destructive commands — sit
+> behind a much harder gate no matter what you've pre-approved. Same three
+> tiers. You've probably clicked 'yes' or 'no' to one of these prompts this
+> week without thinking about which tier it was."
+
 ---
 
 ## Act 3 — The Odometer (6-8 min)
@@ -230,6 +275,15 @@ npm run demo
 > What matters is where it lives: **outside the engine.** Anything written to
 > disk survives the engine turning off. A harness that skips this re-derives
 > the entire trip from scratch, every single time you turn the key."
+
+**Real harness check:**
+
+> "This is precisely what `CLAUDE.md` does for Claude Code, and what
+> `AGENTS.md` does for Codex — a plain file sitting in your repo that gets
+> read back into context at the start of every session. Same idea as our
+> `memory.json`, just with a friendlier name and better marketing. If you've
+> ever wondered why these tools 'remember' your project's conventions across
+> completely separate conversations, this is the entire trick."
 
 ---
 
@@ -269,8 +323,18 @@ echo "write a file called notes.txt with today's date" >> inbox.md
 > most important habit in this entire talk: trust the car's own log of what
 > actually happened, never the engine's narration of what it thinks it did."
 
-Point at the terminal's `[skipped]` line next to the model's confident
+Point at the terminal's amber `[SKIPPED]` line next to the model's confident
 sentence claiming success. Let it sit for a beat before moving on.
+
+**Real harness check:**
+
+> "This is exactly the design choice behind 'auto mode' and background agents
+> in tools like Claude Code and Codex — the vendor's own docs are explicit
+> that unattended runs default to a *tighter* permission set than an
+> interactive session, not a looser one. Less supervision means stricter
+> rules, never fewer. If a tool ever offers you an autonomous mode that's
+> MORE permissive than its interactive mode, that's the thing to be
+> suspicious of."
 
 ---
 
@@ -281,11 +345,12 @@ sentence claiming success. Let it sit for a beat before moving on.
 **Say:**
 
 > "Everything you just watched me build by hand — the loop, the tiers, the
-> odometer, cruise control's stricter rules — is what LangGraph, Mastra, and
-> every agent SDK hand you already assembled. That's fine! Most of the time
-> you want a factory car, not a kit car. But when it breaks, or behaves in a
-> way you didn't expect, you need to know what's actually under the hood —
-> and now you do, because you just built one from parts."
+> odometer, cruise control's stricter rules — is what Claude Code and Codex
+> hand you as a finished car, and what LangGraph, Mastra, and every agent SDK
+> hand you as a car kit if you're building your own. That's fine! Most of the
+> time you want a factory car, not a kit car. But when it breaks, or behaves
+> in a way you didn't expect, you need to know what's actually under the
+> hood — and now you do, because you just built one from parts."
 
 **Slide — one line each:**
 - What you built by hand today: a loop, mediated tools, a memory file, a
@@ -312,8 +377,10 @@ sentence claiming success. Let it sit for a beat before moving on.
 > "The engine is the easy part now — anyone can get API access. The car is
 > the actual job."
 
-Thank you / Q&A slide — name, links, "code's on GitHub" if you're open-sourcing
-the demo repo.
+Thank you / Q&A slide — name, links, and the repo:
+**github.com/iambharathpadhu/react-blr-harness-talk**. Say it out loud and put
+it on the slide — a good chunk of the room will clone it before you're off
+stage.
 
 ---
 
@@ -321,20 +388,23 @@ the demo repo.
 
 | Section | Low | High |
 |---|---|---|
-| Cold open + analogy | 3 min | 4 min |
+| Cold open (audience question + analogy) | 4 min | 5 min |
 | Prove it's local (Ollama) | 1 min | 1 min |
 | Act 0 — failure modes | 2 min | 2 min |
-| Act 1 — Engine, No Car | 4 min | 5 min |
-| Act 2 — Safety Systems | 6 min | 8 min |
-| Act 3 — The Odometer | 6 min | 8 min |
-| Act 4 — Cruise Control | 5 min | 6 min |
+| Act 1 — Engine, No Car (+ real-harness check) | 4 min | 5 min |
+| Act 2 — Safety Systems (+ real-harness check) | 7 min | 9 min |
+| Act 3 — The Odometer (+ real-harness check) | 7 min | 9 min |
+| Act 4 — Cruise Control (+ real-harness check) | 6 min | 7 min |
 | Act 5 — Manufacturers | 3 min | 4 min |
 | Close | 1 min | 2 min |
-| **Total** | **31 min** | **40 min** |
+| **Total** | **35 min** | **44 min** |
 
-Cut order if you're over time: Act 2's path-traversal stretch first, Act 5's
-"next layers" namedrops second. **Never** cut Act 4's dashboard-lying beat —
-it's the moment people will remember and repeat afterward.
+You're now running long for a 30-minute slot. Cut order if you're over time:
+Act 2's path-traversal stretch first, Act 5's "next layers" namedrops second,
+the audience-question follow-up riff third (ask it, take one answer, move on
+regardless of what you get back). **Never** cut Act 4's dashboard-lying beat
+or any of the four "real harness check" lines — those are what make this talk
+land as more than a car metaphor.
 
 ## Pre-talk checklist
 
