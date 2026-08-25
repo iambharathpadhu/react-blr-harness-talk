@@ -8,9 +8,14 @@
 // added — not a rewrite, an addition.
 
 import { chat, type ChatMessage } from "./model.js";
+import { ui } from "./ui.js";
 
 export async function runTurn(messages: ChatMessage[]): Promise<string> {
+  // A local model can take several seconds per round-trip. Print something
+  // immediately so a live demo never looks like it's hung.
+  process.stdout.write(ui.dim("  ..."));
   const reply = await chat(messages);
+  process.stdout.write("\r" + " ".repeat(10) + "\r");
   messages.push(reply);
   return reply.content;
 }
