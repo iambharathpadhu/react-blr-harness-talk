@@ -1,0 +1,10 @@
+node_modules/
+dist/
+memory.json
+sandbox/*
+!sandbox/.gitkeep
+inbox.md
+
+# personal talk-prep notes and the slide deck — not part of the public code
+teach/
+*.pptx
