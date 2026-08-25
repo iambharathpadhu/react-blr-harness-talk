@@ -4,9 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "demo:brittle": "tsx bin/repl.ts --brittle",
     "demo": "tsx bin/repl.ts",
-    "watch": "tsx bin/watch.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

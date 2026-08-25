@@ -1,5 +1,10 @@
 # Designing a Personal AI Harness
 
+> **You're on `step-1-bare-model`** — the very first step of a 6-step build.
+> Just the model, no tools, no loop, no memory. See the full progression
+> table on [`main`](https://github.com/iambharathpadhu/react-blr-harness-talk#the-6-step-build)
+> or jump straight to what comes next: `git checkout step-2-the-car-shell`.
+
 A from-scratch, ~250-line agent harness built for a live conference talk. No
 frameworks, no cloud API keys — everything runs against a local model via
 [Ollama](https://ollama.com) so the demo works even on bad venue wifi.
