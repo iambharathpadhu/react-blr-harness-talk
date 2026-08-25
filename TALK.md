@@ -57,9 +57,9 @@ Barath · ReactJS Bangalore · React Meetup #108
 
 ---
 
-## Cold open (4-5 min)
+## Cold open (3.5-4 min)
 
-### Ask the room first — don't just tell them
+### Ask the room first — don't just tell them (cap this at 30 seconds, one exchange, then move — don't let it become a discussion)
 
 **Say, and actually wait for a response:**
 
@@ -67,15 +67,12 @@ Barath · ReactJS Bangalore · React Meetup #108
 > could define what an 'AI harness' is, beyond 'the thing that wraps the
 > model'?"
 
-Whatever you get — a few hands, blank stares, someone shouts a decent
-definition from the back — use it. If hands go up, ask one person to say it
-out loud and react honestly ("yeah, that's most of it" / "close, there's one
-piece missing"). If nobody moves, that's fine too:
+Take ONE response (a raised hand you call on, or silence) and immediately
+pivot — don't solicit a second opinion:
 
 > "That's normal — it's one of those terms everyone's absorbed by osmosis
-> without anyone actually defining it. So let's define it properly, and then
-> we're going to build one live so it's not just a definition you forget by
-> lunch."
+> without anyone actually defining it. So let's build one live, so it's not
+> just a definition you forget by lunch."
 
 **Then the frame:**
 
@@ -93,15 +90,6 @@ tools). Then say the line that frames the whole talk:
 > it. That's the harness. That's the talk."
 
 **Slide:** the analogy table, engine/car/tools rows only.
-
-### Tell them what's about to happen
-
-**Say:**
-
-> "I could just tell you the four things a harness needs and move on. Instead
-> we're going to build a real one, live, from nothing — so by the end you
-> don't just know the definition, you've watched it get built piece by piece,
-> and you've seen it break before each piece existed."
 
 ### Prove it's not calling out to anyone (1 min, right after the analogy)
 
@@ -224,11 +212,6 @@ npm run demo
 - Ask again → say **yes** → show the file now exists
 - Ask it to delete a file → show it's refused outright, no prompt at all,
   because blocked tools never even ask — like a child-lock, not a request
-
-**Optional stretch (cut first if short on time):** ask it to read a path
-outside the sandbox (`../../etc/hosts`) — show the harness throwing instead
-of leaking a path traversal. "The car has a curb it physically can't drive
-over, no matter what the engine wants."
 
 **Real harness check:**
 
@@ -384,27 +367,40 @@ stage.
 
 ---
 
+## Bonus material (only if you're running fast, or during Q&A)
+
+Not part of the main run-of-show — pull these out only if you finish early or
+someone asks a question that opens the door.
+
+- **Path traversal demo (was Act 2):** ask the agent to read a path outside
+  the sandbox (`../../etc/hosts`) — show the harness throwing instead of
+  leaking it. Line: "The car has a curb it physically can't drive over, no
+  matter what the engine wants."
+
+---
+
 ## Full run-of-show timing
 
 | Section | Low | High |
 |---|---|---|
-| Cold open (audience question + analogy) | 4 min | 5 min |
+| Cold open (audience question + analogy) | 3.5 min | 4 min |
 | Prove it's local (Ollama) | 1 min | 1 min |
-| Act 0 — failure modes | 2 min | 2 min |
-| Act 1 — Engine, No Car (+ real-harness check) | 4 min | 5 min |
-| Act 2 — Safety Systems (+ real-harness check) | 7 min | 9 min |
-| Act 3 — The Odometer (+ real-harness check) | 7 min | 9 min |
-| Act 4 — Cruise Control (+ real-harness check) | 6 min | 7 min |
-| Act 5 — Manufacturers | 3 min | 4 min |
-| Close | 1 min | 2 min |
-| **Total** | **35 min** | **44 min** |
+| Act 0 — failure modes | 1.5 min | 2 min |
+| Act 1 — Engine, No Car (+ real-harness check) | 3.5 min | 4.5 min |
+| Act 2 — Safety Systems (+ real-harness check) | 5.5 min | 6.5 min |
+| Act 3 — The Odometer (+ real-harness check) | 5.5 min | 6.5 min |
+| Act 4 — Cruise Control (+ real-harness check) | 5 min | 6 min |
+| Act 5 — Manufacturers | 2.5 min | 3 min |
+| Close | 1 min | 1.5 min |
+| **Total** | **29.5 min** | **35 min** |
 
-You're now running long for a 30-minute slot. Cut order if you're over time:
-Act 2's path-traversal stretch first, Act 5's "next layers" namedrops second,
-the audience-question follow-up riff third (ask it, take one answer, move on
-regardless of what you get back). **Never** cut Act 4's dashboard-lying beat
-or any of the four "real harness check" lines — those are what make this talk
-land as more than a car metaphor.
+This now targets a 30-minute slot on the low end, with the path-traversal
+demo and the audience-question follow-up already moved out of the main path
+(see "Bonus material" above) rather than left in as things to remember to cut
+live. If you're still running long on the day: Act 5's "next layers"
+namedrops go first, tightening Act 2/3's "Say" lines second. **Never** cut
+Act 4's dashboard-lying beat or any of the four "real harness check" lines —
+those are what make this talk land as more than a car metaphor.
 
 ## Pre-talk checklist
 
@@ -422,3 +418,6 @@ land as more than a car metaphor.
       don't talk over it
 - [ ] Decide now whether you're doing the Airplane Mode bit — if yes, turn it
       on before Act 1 and leave it on the whole talk
+- [ ] The opening audience question is capped at 30 seconds, one response,
+      then move — rehearse the pivot line so it doesn't turn into a Q&A this
+      early
