@@ -1,11 +1,10 @@
 # Designing a Personal AI Harness
 
-> **You're on `step-3-tools-no-permission`** — step 3 of a 6-step build.
-> Real file tools now exist and run the instant they're requested — no
-> gating, no confirmation. This is the naive agent everyone writes first.
-> See the full progression table on
+> **You're on `step-4-tiered-permissions`** — step 4 of a 6-step build.
+> Tools now run through a tier map: safe / confirm / blocked. The harness
+> decides what's allowed, not the model. See the full progression table on
 > [`main`](https://github.com/iambharathpadhu/react-blr-harness-talk#the-6-step-build)
-> or jump to what's next: `git checkout step-4-tiered-permissions`.
+> or jump to what's next: `git checkout step-5-persistent-memory`.
 
 A from-scratch, ~250-line agent harness built for a live conference talk. No
 frameworks, no cloud API keys — everything runs against a local model via

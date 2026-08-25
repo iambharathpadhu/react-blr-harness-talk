@@ -1,13 +1,11 @@
-// STEP 3: real tools the model can call. Every one of them runs the
-// instant it's requested — there is no gate here yet, no confirmation, no
-// concept of "should this be allowed." That's the whole point of this step:
-// this is what "tools" looks like before you've decided a policy for them.
+// STEP 4: same tools as step 3. What's new is tierOf below — the harness,
+// not the model, deciding what each tool is allowed to do. The model still
+// has no vote on this: it can ask for anything, but whether that ask
+// becomes a real action is a policy lookup, not a capability question.
 //
-// The one safety measure that DOES exist already is resolveInSandbox below
-// — a hard physical wall (you cannot touch a path outside this folder, full
-// stop) as opposed to a policy decision (should THIS action be allowed).
-// Containment and permission are two different concerns; step 4 adds the
-// second one without touching the first.
+// resolveInSandbox is unchanged from step 3 — containment (can this path
+// ever be touched) and permission (should THIS call be allowed right now)
+// are different concerns, and tiers only add the second one.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -22,6 +20,15 @@ function resolveInSandbox(relativePath: string): string {
   }
   return full;
 }
+
+export type Tier = "safe" | "confirm" | "blocked";
+
+export const tierOf: Record<string, Tier> = {
+  list_files: "safe",
+  read_file: "safe",
+  write_file: "confirm",
+  delete_file: "blocked",
+};
 
 export const toolSchemas = [
   {
