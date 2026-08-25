@@ -71,8 +71,29 @@ Take ONE response (a raised hand you call on, or silence) and immediately
 pivot — don't solicit a second opinion:
 
 > "That's normal — it's one of those terms everyone's absorbed by osmosis
-> without anyone actually defining it. So let's build one live, so it's not
-> just a definition you forget by lunch."
+> without anyone actually defining it."
+
+### Why this is worth 30 minutes of your life
+
+**Say:**
+
+> "Here's why this matters, before we write a line of code. Getting model
+> access stopped being the hard part — anyone in this room can call an API or
+> run a model locally in five minutes. The model alone has no judgment. It
+> can't decide what's safe to do, it doesn't remember anything between calls,
+> it has no concept of 'should I actually do this, or ask first.'
+>
+> Every AI tool you actually trust — Claude Code, Codex, Cursor — isn't good
+> because the model is smarter. It's good because of the engineering *around*
+> the model: what it's allowed to touch, what it remembers, what happens when
+> it fails, how much it's trusted unsupervised. If you don't understand that
+> layer, you can't debug your own AI tooling when it misbehaves, you can't
+> build an AI feature you'd actually trust in production, and you can't tell
+> a real safety design from a marketing slide when a vendor claims their
+> agent is 'safe.'
+>
+> So let's build one live, so it's not just a definition you forget by
+> lunch."
 
 **Then the frame:**
 
