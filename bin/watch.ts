@@ -10,22 +10,24 @@
 // should make the harness MORE conservative by default, not less.
 
 import fs from "node:fs";
-import type { ChatMessage } from "../harness/model.js";
+import type { ChatMessage, ChatUsage } from "../harness/model.js";
 import { runTurn } from "../harness/runtime.js";
 import { recall } from "../harness/memory.js";
 import { systemPrompt } from "../harness/system-prompt.js";
-import { ui } from "../harness/ui.js";
+import { ui, formatTokens, AUTONOMOUS_JOKES } from "../harness/ui.js";
 
 const INBOX = "inbox.md";
 const POLL_MS = 3000;
+const MODEL = process.env.HARNESS_MODEL ?? "qwen2.5:7b";
 
 async function main() {
   if (!fs.existsSync(INBOX)) fs.writeFileSync(INBOX, "", "utf-8");
 
   const messages: ChatMessage[] = [{ role: "system", content: systemPrompt(recall()) }];
+  const session: ChatUsage = { promptTokens: 0, completionTokens: 0 };
   let seen = fs.readFileSync(INBOX, "utf-8").split("\n").filter(Boolean).length;
 
-  console.log(ui.banner(`harness-demo · autonomous (cruise control)`));
+  console.log(ui.banner(`harness-demo · step 6 · autonomous (cruise control) · ${MODEL}`));
   console.log(ui.dim(`watching ${INBOX} every ${POLL_MS}ms — append a line to trigger the agent`));
   console.log(ui.dim(`e.g.: echo "list files in the sandbox" >> ${INBOX}`) + "\n");
 
@@ -42,8 +44,11 @@ async function main() {
     for (const line of newLines) {
       console.log(`\n${ui.wake("[WAKE]")} ${ui.dim(line)}`);
       messages.push({ role: "user", content: line });
-      const answer = await runTurn(messages, { unattended: true });
+      const { answer, usage } = await runTurn(messages, { unattended: true, jokes: AUTONOMOUS_JOKES });
+      session.promptTokens += usage.promptTokens;
+      session.completionTokens += usage.completionTokens;
       console.log(`${ui.agent("agent (autonomous)>")} ${answer}`);
+      console.log(ui.dim(formatTokens(usage, session)));
     }
 
     setTimeout(poll, POLL_MS);

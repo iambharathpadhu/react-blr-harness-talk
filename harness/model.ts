@@ -1,6 +1,7 @@
-// The one place the model is configured. Swap MODEL / OLLAMA_URL and nothing
-// else in the harness has to change — that's the point of giving the model
-// its own file instead of calling fetch() from the runtime loop directly.
+// STEP 3: the model can now be handed a list of tools and ask to call one.
+// The only new thing versus step 1/2 is the `tools` parameter and the
+// `tool_calls` / `tool_name` fields — everything else about talking to
+// Ollama is unchanged.
 
 export interface ToolCall {
   function: { name: string; arguments: Record<string, unknown> };
@@ -13,13 +14,18 @@ export interface ChatMessage {
   tool_name?: string; // only set on role: "tool" messages
 }
 
+export interface ChatUsage {
+  promptTokens: number;
+  completionTokens: number;
+}
+
 const OLLAMA_URL = process.env.OLLAMA_URL ?? "http://localhost:11434";
 const MODEL = process.env.HARNESS_MODEL ?? "qwen2.5:7b";
 
 export async function chat(
   messages: ChatMessage[],
   tools: unknown[],
-): Promise<ChatMessage> {
+): Promise<{ message: ChatMessage; usage: ChatUsage }> {
   const res = await fetch(`${OLLAMA_URL}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -33,6 +39,19 @@ export async function chat(
     );
   }
 
-  const data = (await res.json()) as { message: ChatMessage };
-  return data.message;
+  // Ollama's non-streaming /api/chat response already includes real token
+  // counts alongside the message — prompt_eval_count/eval_count — so this
+  // is free telemetry, not something the harness has to compute itself.
+  const data = (await res.json()) as {
+    message: ChatMessage;
+    prompt_eval_count?: number;
+    eval_count?: number;
+  };
+  return {
+    message: data.message,
+    usage: {
+      promptTokens: data.prompt_eval_count ?? 0,
+      completionTokens: data.eval_count ?? 0,
+    },
+  };
 }
