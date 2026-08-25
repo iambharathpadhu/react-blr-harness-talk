@@ -17,7 +17,14 @@ const MAX_STEPS = 8;
 
 export async function runTurn(messages: ChatMessage[]): Promise<string> {
   for (let step = 0; step < MAX_STEPS; step++) {
+    // A local model can take several seconds per round-trip. Print
+    // something immediately so a live demo never looks like it's hung —
+    // silence during a real wait reads as "broken" from the audience.
+    // (Clear width is hardcoded, not derived from the styled string's
+    // .length — ANSI color codes inflate that count past what's visible.)
+    process.stdout.write(ui.dim("  ..."));
     const reply = await chat(messages, toolSchemas);
+    process.stdout.write("\r" + " ".repeat(10) + "\r");
     messages.push(reply);
 
     if (!reply.tool_calls || reply.tool_calls.length === 0) {
