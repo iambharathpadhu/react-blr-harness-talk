@@ -7,15 +7,15 @@
 // step 3, and this function is exactly where the tool-calling loop gets
 // added — not a rewrite, an addition.
 
-import { chat, type ChatMessage } from "./model.js";
-import { ui } from "./ui.js";
+import { chat, type ChatMessage, type ChatUsage } from "./model.js";
+import { spinner, INTERACTIVE_JOKES } from "./ui.js";
 
-export async function runTurn(messages: ChatMessage[]): Promise<string> {
-  // A local model can take several seconds per round-trip. Print something
-  // immediately so a live demo never looks like it's hung.
-  process.stdout.write(ui.dim("  ..."));
-  const reply = await chat(messages);
-  process.stdout.write("\r" + " ".repeat(10) + "\r");
+export async function runTurn(
+  messages: ChatMessage[],
+): Promise<{ answer: string; usage: ChatUsage }> {
+  const stop = spinner(INTERACTIVE_JOKES);
+  const { message: reply, usage } = await chat(messages);
+  stop();
   messages.push(reply);
-  return reply.content;
+  return { answer: reply.content, usage };
 }
