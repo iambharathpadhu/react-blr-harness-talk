@@ -1,10 +1,9 @@
 #!/usr/bin/env node
-// STEP 2: the same bare model, now sitting inside a real (if empty) harness
-// shell — a system prompt as its own concern, a runTurn() loop as its own
-// concern, instead of both being inlined here. Behavior is identical to
-// step 1 from the user's side: still no tools, still nothing it can
-// actually do. What's different is the shape of the code that later steps
-// will grow into.
+// STEP 3: the shell now has real tools wired into it — see
+// harness/tools.ts and the loop in harness/runtime.ts. Nothing in this file
+// changed to make that happen; runTurn's signature is exactly what it was
+// in step 2. That's the payoff of formalizing the shell early: capability
+// grew without this file needing to know or care.
 
 import readline from "node:readline/promises";
 import { stdin, stdout } from "node:process";
@@ -16,7 +15,7 @@ import { ui } from "../harness/ui.js";
 async function main() {
   const messages: ChatMessage[] = [{ role: "system", content: systemPrompt() }];
 
-  console.log(ui.banner("harness-demo · step 2 · the car shell"));
+  console.log(ui.banner("harness-demo · step 3 · tools, no permission"));
   console.log(ui.dim("type 'exit' to quit") + "\n");
 
   const rl = readline.createInterface({ input: stdin, output: stdout });
