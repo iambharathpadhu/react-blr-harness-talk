@@ -1,15 +1,14 @@
 // THE AGENT LOOP.
 //
-// Structurally this is the same brittle while-loop everyone writes first:
-// call the model, if it wants a tool run the tool, feed the result back,
-// repeat until it stops asking for tools. What makes it a harness instead of
-// a script is everything OUTSIDE the loop that this function is handed:
-// which tier gate each tool call passes through, and whether tool calls are
-// even mediated at all.
+// Call the model, run any requested tools through the tier gate, feed
+// results back, repeat until no tool_calls. This is the whole loop — see
+// the step-by-step build in this repo's git history/branches
+// (step-1-bare-model through step-5-persistent-memory) for how each piece
+// of this got added one at a time.
 //
-// `brittle: true` reproduces the naive version for the cold-open demo: every
-// tool is treated as "safe" and runs the instant the model asks, no matter
-// what tierOf says.
+// `unattended: true` is the one behavior this final step adds: confirm-tier
+// tools are skipped rather than prompted, because there's no human to ask.
+// Autonomy makes the harness MORE conservative here, not less.
 
 import type readline from "node:readline/promises";
 import { chat, type ChatMessage } from "./model.js";
@@ -20,7 +19,6 @@ import { ui } from "./ui.js";
 const MAX_STEPS = 8;
 
 export interface RuntimeOptions {
-  brittle?: boolean;
   unattended?: boolean; // autonomous mode: only ever runs "safe" tier tools
   rl?: readline.Interface; // required unless unattended: true — see permissions.ts
 }
@@ -39,7 +37,7 @@ export async function runTurn(
 
     for (const call of reply.tool_calls) {
       const { name, arguments: args } = call.function;
-      const tier: Tier = opts.brittle ? "safe" : (tierOf[name] ?? "confirm");
+      const tier: Tier = tierOf[name] ?? "confirm";
 
       if (tier === "blocked") {
         console.log(`  ${ui.blocked("[BLOCKED]")} ${ui.dim(`"${name}" is disabled by harness policy — never runs.`)}`);
