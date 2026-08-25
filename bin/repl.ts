@@ -6,15 +6,18 @@
 
 import readline from "node:readline/promises";
 import { stdin, stdout } from "node:process";
-import type { ChatMessage } from "../harness/model.js";
+import type { ChatMessage, ChatUsage } from "../harness/model.js";
 import { runTurn } from "../harness/runtime.js";
 import { systemPrompt } from "../harness/system-prompt.js";
-import { ui } from "../harness/ui.js";
+import { ui, formatTokens } from "../harness/ui.js";
+
+const MODEL = process.env.HARNESS_MODEL ?? "qwen2.5:7b";
 
 async function main() {
   const messages: ChatMessage[] = [{ role: "system", content: systemPrompt() }];
+  const session: ChatUsage = { promptTokens: 0, completionTokens: 0 };
 
-  console.log(ui.banner("harness-demo · step 4 · tiered permissions"));
+  console.log(ui.banner(`harness-demo · step 4 · tiered permissions · ${MODEL}`));
   console.log(ui.dim("type 'exit' to quit") + "\n");
 
   const rl = readline.createInterface({ input: stdin, output: stdout });
@@ -27,8 +30,13 @@ async function main() {
     }
     if (input.trim() === "exit") break;
     messages.push({ role: "user", content: input });
-    const answer = await runTurn(messages, rl);
-    console.log(`${ui.agent("agent>")} ${answer}\n`);
+
+    const { answer, usage } = await runTurn(messages, rl);
+    session.promptTokens += usage.promptTokens;
+    session.completionTokens += usage.completionTokens;
+
+    console.log(`${ui.agent("agent>")} ${answer}`);
+    console.log(ui.dim(formatTokens(usage, session)) + "\n");
   }
   rl.close();
   process.exit(0);
