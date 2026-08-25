@@ -1,9 +1,11 @@
 # Designing a Personal AI Harness
 
-> **You're on `step-1-bare-model`** — the very first step of a 6-step build.
-> Just the model, no tools, no loop, no memory. See the full progression
-> table on [`main`](https://github.com/iambharathpadhu/react-blr-harness-talk#the-6-step-build)
-> or jump straight to what comes next: `git checkout step-2-the-car-shell`.
+> **You're on `step-2-the-car-shell`** — step 2 of a 6-step build. The
+> system prompt and the conversation loop now have their own files, but
+> there are still zero tools — same capability as step 1, different shape.
+> See the full progression table on
+> [`main`](https://github.com/iambharathpadhu/react-blr-harness-talk#the-6-step-build)
+> or jump to what's next: `git checkout step-3-tools-no-permission`.
 
 A from-scratch, ~250-line agent harness built for a live conference talk. No
 frameworks, no cloud API keys — everything runs against a local model via
