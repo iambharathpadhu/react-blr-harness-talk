@@ -42,8 +42,13 @@ export async function runTurn(
       const { name, arguments: args } = call.function;
       const tier: Tier = tierOf[name] ?? "confirm";
 
+      // Say the decision out loud before acting on it — the harness picking
+      // a tier is its own visible event, not something implied only by
+      // which branch runs next.
+      console.log(`  ${ui.dim(`[POLICY] ${tier}`)}`);
+
       if (tier === "blocked") {
-        console.log(`  ${ui.blocked("[BLOCKED]")} ${ui.dim(`"${name}" is disabled by harness policy — never runs.`)}`);
+        console.log(`  ${ui.blocked("[BLOCKED]")} ${ui.dim(`"${name}" never runs.`)}`);
         messages.push({ role: "tool", tool_name: name, content: "BLOCKED by harness policy." });
         continue;
       }
