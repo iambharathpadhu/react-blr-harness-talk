@@ -48,6 +48,7 @@ async function main() {
     console.log(`${ui.agent("agent>")} ${answer}`);
     console.log(ui.dim(formatTokens(usage, session)) + "\n");
   }
+  console.log(ui.dim(`  (same ${MODEL} as step 1 — only the harness around it changed)`));
   rl.close();
   process.exit(0);
 }

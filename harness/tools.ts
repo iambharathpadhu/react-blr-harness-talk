@@ -117,8 +117,15 @@ export async function runTool(name: string, args: Record<string, unknown>): Prom
       return fs.readFileSync(resolveInSandbox(String(args.path)), "utf-8");
     case "write_file": {
       const content = String(args.content ?? "");
-      fs.writeFileSync(resolveInSandbox(String(args.path)), content, "utf-8");
-      return `Wrote ${content.length} chars to ${args.path}`;
+      const target = resolveInSandbox(String(args.path));
+      fs.writeFileSync(target, content, "utf-8");
+      // A write call not throwing is not proof the content is actually
+      // there — read it back and say so explicitly. This is what makes the
+      // "verified on disk" claim below true instead of assumed.
+      const verified = fs.readFileSync(target, "utf-8") === content;
+      return verified
+        ? `Wrote ${content.length} chars to ${args.path} (verified on disk)`
+        : `Wrote ${content.length} chars to ${args.path}, but the on-disk content didn't match — treat this as unverified.`;
     }
     case "delete_file":
       fs.unlinkSync(resolveInSandbox(String(args.path)));
