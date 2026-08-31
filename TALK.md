@@ -384,7 +384,7 @@ order**, pausing to let each one resolve before typing the next:
 ```bash
 echo "list the files in the sandbox" >> inbox.md
 echo "remember that I like my coffee black" >> inbox.md
-echo "write a file called notes.txt with today's date" >> inbox.md
+echo "write a file called notes.txt with the text: talk notes" >> inbox.md
 ```
 - **Line 1** (safe tier) — it actually lists the sandbox, unattended, nobody
   typed anything into the chat. This is the beat that proves autonomy isn't
