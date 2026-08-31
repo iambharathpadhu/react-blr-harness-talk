@@ -139,6 +139,12 @@ tools). Then say the line that frames the whole talk:
 - **Optional, high-impact if you're confident:** turn on Airplane Mode before
   Step 1 and leave it on for the whole talk. If a live demo can survive with
   zero network, that's a stronger proof than any slide.
+- Once the telemetry line appears in Step 1, point at it once: it prints
+  `$0.00 · running locally` next to the token count, every single turn.
+  That's not decoration — it's the same "economics" line item a company
+  weighs when deciding whether to build its own harness versus renting one.
+  Say it once here, then let the audience just watch it repeat for free the
+  rest of the talk.
 
 ---
 
@@ -233,7 +239,12 @@ npm run demo
 - Ask it to write a file, then delete it. Watch it just... do both. No
   pause, no confirmation. Point at the new `→` preview line under each
   `[RUN]` — the harness is now showing you what the tool actually returned,
-  not just that it was called.
+  not just that it was called. Notice the write result says
+  `(verified on disk)` — the harness re-read the file after writing it,
+  rather than trusting `fs.writeFileSync` not throwing as proof the content
+  is actually there. Say once, briefly: "a tool call succeeding and the
+  outcome being true are two different claims — this harness checks both,
+  and that distinction is going to matter a lot in step 6."
 - `Ctrl-C` mid-conversation. Run the same command again. Ask "what did I
   just tell you?" — nothing. The engine has no memory of the last drive.
 
@@ -270,6 +281,12 @@ plain object literal, nothing clever, and that's the whole point.
 | `list_files`, `read_file`, `recall_memory` | **safe** — just happens |
 | `write_file` | **confirm** — ask the driver first |
 | `delete_file` | **blocked** — the car refuses, full stop |
+
+Point out the new `[POLICY]` line that now prints before every single tool
+call, safe ones included — it's the harness saying its decision out loud,
+not just acting on it silently. That one word (`safe` / `confirm` /
+`blocked`) is the entire tier map, made visible in the terminal instead of
+only living in a source file.
 
 **The line to land, verbatim:**
 
@@ -391,7 +408,11 @@ three real actions, not the only trick in the act:**
 > what it thinks it did."
 
 Point at the terminal's amber `[SKIPPED]` line next to the model's confident
-sentence claiming success. Let it sit for a beat before moving on.
+sentence claiming success. Let it sit for a beat before moving on. Then draw
+the contrast back to step 3's `(verified on disk)` line: "when this harness
+DOES write something, it checks — you saw that verified tag on every real
+write today. Line three has no verified tag anywhere, because nothing
+happened to verify. The absence of proof is itself the tell."
 
 **Real harness check:**
 
@@ -429,6 +450,28 @@ sentence claiming success. Let it sit for a beat before moving on.
   (checkpointed steps that survive a crash), sandboxed code execution,
   multi-agent handoffs
 
+**The build-vs-buy answer, since someone will ask it if you don't say it
+first:**
+
+> "So should you ever build one of these yourself? Honest answer: if the job
+> is general-purpose coding, no — use Claude Code or Codex, they've already
+> solved it better than you will this weekend. Build only the parts where
+> your business is actually different. Buy or reuse everything else."
+
+**Say, landing it with the quotable line:**
+
+> "Here's a way to think about it: the model is rented intelligence — anyone
+> can call the same API you do. The harness is where your company's actual
+> judgment lives — which systems it's allowed to touch, whose approval a
+> risky action needs, what your business considers a critical failure. A
+> generic harness doesn't know any of that. Yours would have to."
+
+**Optional, if you have the extra 30 seconds:** a one-line concrete example
+lands this better than the abstraction alone — "picture a logistics agent
+that has to decide whether a delayed shipment needs a customer email and
+whose approval that email needs. No framework ships knowing your approval
+hierarchy. That's the 10% you'd actually be building."
+
 ---
 
 ## Close (1-1.5 min)
@@ -443,6 +486,13 @@ sentence claiming success. Let it sit for a beat before moving on.
 
 > "The engine is the easy part now — anyone can get API access. The car is
 > the actual job."
+
+**A live beat, not just a slide — do this before the Q&A slide comes up:**
+type `exit` into the still-open `main` terminal from Step 6. It prints one
+last dim line before quitting:
+`(same qwen2.5:7b as step 1 — only the harness around it changed)`
+Let that sit on screen for a second, unnarrated — the terminal itself is
+making the closing argument, not you.
 
 Thank you / Q&A slide — name, links, and the repo:
 **github.com/iambharathpadhu/react-blr-harness-talk**. Say it out loud and put

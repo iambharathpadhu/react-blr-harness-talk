@@ -87,5 +87,9 @@ export function formatTokens(
   session: { promptTokens: number; completionTokens: number },
 ): string {
   const sessionTotal = session.promptTokens + session.completionTokens;
-  return `  tokens: ${usage.promptTokens} in · ${usage.completionTokens} out · session total ${sessionTotal}`;
+  // Genuinely $0 — everything runs against a local Ollama model, not a
+  // metered API. Printed every turn on purpose: it's the same "economics"
+  // line item a company weighs when deciding whether to build its own
+  // harness instead of renting one.
+  return `  tokens: ${usage.promptTokens} in · ${usage.completionTokens} out · session total ${sessionTotal} · $0.00 · running locally`;
 }
