@@ -22,6 +22,11 @@ export interface ChatUsage {
 const OLLAMA_URL = process.env.OLLAMA_URL ?? "http://localhost:11434";
 const MODEL = process.env.HARNESS_MODEL ?? "qwen2.5:7b";
 
+// Low temperature + a fixed seed, not defaults: a live demo needs the same
+// prompt to behave the same way on rehearsal and on stage. Default sampling
+// on a 7B model is chatty enough to sometimes skip a tool call outright.
+const SAMPLING = { temperature: 0.1, seed: 42 };
+
 export async function chat(
   messages: ChatMessage[],
   tools: unknown[],
@@ -29,7 +34,7 @@ export async function chat(
   const res = await fetch(`${OLLAMA_URL}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model: MODEL, messages, tools, stream: false }),
+    body: JSON.stringify({ model: MODEL, messages, tools, stream: false, options: SAMPLING }),
   });
 
   if (!res.ok) {
