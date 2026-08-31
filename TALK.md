@@ -488,8 +488,9 @@ hierarchy. That's the 10% you'd actually be building."
 > the actual job."
 
 **A live beat, not just a slide — do this before the Q&A slide comes up:**
-type `exit` into the still-open `main` terminal from Step 6. It prints one
-last dim line before quitting:
+`watch.ts` just polls forever, so this needs the *interactive* REPL, not the
+watcher: quickly run `npm run demo` on `main` (or switch to one still open
+from earlier), then type `exit`. It prints one last dim line before quitting:
 `(same qwen2.5:7b as step 1 — only the harness around it changed)`
 Let that sit on screen for a second, unnarrated — the terminal itself is
 making the closing argument, not you.
