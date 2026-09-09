@@ -80,11 +80,13 @@ time.
 
 ---
 
-## The 6-step build
+## The 5-step build (+ a bonus 6th)
 
 This repo doubles as a self-guided tutorial. Every step below is its own git
 branch, each one a real subset of the next — `git diff` between any two
-consecutive branches shows exactly what capability was added and why.
+consecutive branches shows exactly what capability was added and why. Steps
+1-5 are the live talk script; `main` is a bonus step built and tested but not
+demoed on stage (see below).
 
 | Step | Branch | What it adds |
 |---|---|---|
@@ -93,11 +95,11 @@ consecutive branches shows exactly what capability was added and why.
 | 3 | [`step-3-tools-no-permission`](../../tree/step-3-tools-no-permission) | Real file tools. Every call runs the instant it's requested — the naive agent everyone writes first. |
 | 4 | [`step-4-tiered-permissions`](../../tree/step-4-tiered-permissions) | A tier map: safe / confirm / blocked. The harness decides what's allowed, not the model. |
 | 5 | [`step-5-persistent-memory`](../../tree/step-5-persistent-memory) | A flat file on disk that survives the process exiting — quit and restart, it still remembers. |
-| 6 | `main` (this branch) | Autonomous mode. The agent can act with nobody watching — and gets *stricter* defaults, not looser ones. |
+| 6 (bonus) | `main` (this branch) | Autonomous mode, an audit trail, and a session budget. The agent can act with nobody watching — and gets *stricter* defaults, not looser ones. Not part of the live talk; explore it yourself. |
 
 Try it yourself: `git checkout step-1-bare-model`, run `npm run demo`, work
-your way up to `main` one `git checkout` at a time. Full talk script and
-speaker notes for presenting this live are in [TALK.md](TALK.md).
+your way up through the branches one `git checkout` at a time. Full talk
+script and speaker notes for presenting this live are in [TALK.md](TALK.md).
 
 ## Rehearsal checklist
 
