@@ -21,13 +21,19 @@ npm install
 npm run typecheck           # sanity check
 ```
 
-Model choice matters more than it should: `qwen2.5:7b` calls tools once and
-answers cleanly. `llama3.2:3b` is faster but noticeably chattier — it'll
-sometimes call the same tool two or three times before answering, or narrate
-a tool call as text instead of actually invoking it. Rehearse with whichever
-one you'll actually run live, and don't be afraid to point at that flakiness
-on stage — "this is a 3B free model doing its best" is a fine thing to say
-out loud, and it's an honest answer to "why not just trust the model."
+**Use `qwen2.5:7b` for the live talk. This isn't a mild preference — it's
+required.** Tested head-to-head on the actual step-6 script: `llama3.2:3b`
+called `list_files` 4 times on a single-line request, then looped calling it
+7 more times on the next turn and hit the 8-step turn limit without
+finishing. That burned the entire session budget before the harness ever
+reached the scripted write — meaning the "dashboard lying" beat, the best
+moment in the whole talk, never happened at all. `qwen2.5:7b` ran the exact
+same three-line script clean, once, correctly, every time.
+
+`llama3.2:3b` is kept pulled only as a last-resort emergency fallback if
+`qwen2.5:7b` is somehow unusable on the presenting machine — and if you do
+fall back, don't run the script as written; raise `MAX_STEPS` and the
+session budget first, or cut step 6 down to one line.
 
 ## Running it
 

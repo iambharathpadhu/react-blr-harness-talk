@@ -128,10 +128,14 @@ tools). Then say the line that frames the whole talk:
 > "One more thing before we start the engine — literally. Everything today
 > runs on my laptop. No API key, nothing leaves this machine."
 
-- Point at `model.ts` on screen: `OLLAMA_URL` defaults to `localhost:11434`.
-  There's no `API_KEY` anywhere in this codebase — grep for it if anyone
-  doesn't believe you.
-- In the right terminal: `ollama list` — show the two models already pulled.
+- Point at `model.ts` on screen: `OLLAMA_URL` defaults to `localhost:11434`,
+  and `HARNESS_MODEL` defaults to **`qwen2.5:7b`** — that's the model
+  running for the entire talk, chosen because it calls tools once and
+  answers cleanly (see README.md — `llama3.2:3b` is kept pulled only as an
+  emergency fallback; it's noticeably chattier and breaks step 6's payoff if
+  actually used live).
+- In the right terminal: `ollama list` — show the two models already pulled,
+  but say out loud which one is actually running today.
 - `ollama ps` — run it right after the first demo request lands, not before
   (it's empty until something's actually using the model). Shows the model
   loaded into memory, how much RAM/GPU it's using, right there on your own
@@ -564,8 +568,10 @@ land as more than a car metaphor.
 
 ## Pre-talk checklist
 
-- [ ] `ollama serve` running, model pulled, tested on the exact laptop you're
-      presenting from (see README.md rehearsal checklist)
+- [ ] `ollama serve` running, **`qwen2.5:7b` pulled and confirmed via
+      `ollama list`** on the exact laptop you're presenting from — this is
+      the required model, not a preference (see README.md's "Model choice"
+      section for why `llama3.2:3b` breaks step 6 if used live)
 - [ ] VS Code `code` CLI installed (Cmd+Shift+P → Shell Command: Install
       'code' command in PATH) and `demo/open-act.sh ollama`/`autonomy` tested
       on that same laptop — don't discover this is broken on stage
