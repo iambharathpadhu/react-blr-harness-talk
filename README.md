@@ -44,7 +44,12 @@ test this before the talk, not on stage.
 
 `demo` and `watch` both read/write `memory.json` and a `sandbox/` directory
 in the project root — delete `memory.json` any time to reset to a "first
-session" state for a rehearsal.
+session" state for a rehearsal. `watch` also appends every policy decision
+(run/blocked/skipped/denied/budget-exceeded) to `audit.jsonl` — a reviewable
+record for exactly the case autonomy exists for: nobody watched it happen
+live. `watch` also enforces a session-wide token + action budget
+(`HARNESS_TOKEN_BUDGET`, `HARNESS_ACTION_BUDGET`, both env-overridable) so
+unattended mode can't quietly run forever.
 
 ## Project layout
 
@@ -56,6 +61,7 @@ harness/
   memory.ts          persistent facts, a flat JSON file
   system-prompt.ts    what the agent is told, including recalled memory
   runtime.ts          the loop: model -> tool calls -> tier gate -> repeat
+  audit.ts            append-only audit.jsonl of every policy decision
 bin/
   repl.ts            interactive entrypoint (the finished harness)
   watch.ts            autonomous entrypoint (no human typing)

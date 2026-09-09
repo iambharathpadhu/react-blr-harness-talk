@@ -414,6 +414,22 @@ DOES write something, it checks — you saw that verified tag on every real
 write today. Line three has no verified tag anywhere, because nothing
 happened to verify. The absence of proof is itself the tell."
 
+**Immediately after, land the audit trail — same beat, stronger proof, zero
+new choreography:**
+
+> "And notice I didn't have to trust my own memory of what just happened
+> either."
+
+Run `cat audit.jsonl | jq` in the idle right terminal. Point at the last
+line: `{"tool":"write_file","tier":"confirm","outcome":"skipped",...}` —
+no `"run"` outcome anywhere for that call.
+
+> "Every policy decision this harness makes gets written to a plain
+> append-only file, not just printed to a terminal I happen to be watching.
+> That's the actual point of step 6: the moment nobody's watching live is
+> exactly the moment you need a record that doesn't depend on anyone having
+> watched."
+
 **Real harness check:**
 
 > "This is exactly the design choice behind 'auto mode' and background agents
@@ -449,6 +465,10 @@ happened to verify. The absence of proof is itself the tell."
 - Next layers past today's scope (name-drop, don't demo): durable execution
   (checkpointed steps that survive a crash), sandboxed code execution,
   multi-agent handoffs
+- One more thing this harness already has, just not demoed live: a session
+  budget on autonomous mode — a token and action ceiling, because "nobody's
+  watching" should never mean "nothing stops it." Once it's spent, `watch.ts`
+  refuses new work without even asking the model again.
 
 **The build-vs-buy answer, since someone will ask it if you don't say it
 first:**
@@ -526,16 +546,18 @@ someone asks a question that opens the door.
 | Step 3 — Tools, No Permission (+ real-harness check) | 3.5 min | 4.5 min |
 | Step 4 — Tiered Permissions (+ real-harness check) | 5.5 min | 6.5 min |
 | Step 5 — Persistent Memory (+ real-harness check) | 5.5 min | 6.5 min |
-| Step 6 — Autonomous Mode (+ real-harness check) | 6 min | 7.5 min |
+| Step 6 — Autonomous Mode (+ real-harness check + audit trail) | 6.5 min | 8 min |
 | The Car Manufacturers | 2.5 min | 3 min |
 | Close | 1 min | 1.5 min |
-| **Total** | **32 min** | **39.5 min** |
+| **Total** | **32.5 min** | **40 min** |
 
 This runs a bit over the old 5-act version because step 6 now carries three
 choreographed actions instead of one — that's a deliberate trade for a
 stronger finale. If you're running long on the day, cut in this order: The
-Car Manufacturers' "next layers" namedrops first; Step 2 down to a single
-sentence with no editor glance second; tighten Step 4/5's "Say" lines third.
+Car Manufacturers' "next layers" namedrops first; the `jq` audit-trail
+follow-up in Step 6 second (it's one sentence and one command, cheap to cut,
+the dashboard-lying beat still lands without it); Step 2 down to a single
+sentence with no editor glance third; tighten Step 4/5's "Say" lines fourth.
 **Never** cut Step 6's dashboard-lying beat, its three-line choreography, or
 any of the four "real harness check" lines — those are what make this talk
 land as more than a car metaphor.
@@ -547,10 +569,13 @@ land as more than a car metaphor.
 - [ ] VS Code `code` CLI installed (Cmd+Shift+P → Shell Command: Install
       'code' command in PATH) and `demo/open-act.sh ollama`/`autonomy` tested
       on that same laptop — don't discover this is broken on stage
+- [ ] `jq` installed (`brew install jq`) and `cat audit.jsonl | jq` rehearsed
+      once on `main` — this is the Step 6 audit-trail follow-up
 - [ ] `npm install` run once, `npm run typecheck` passing, on **every** branch
       you'll check out live
-- [ ] `memory.json`, `inbox.md` deleted, `sandbox/` empty, on **every** branch
-      before you start — each step needs a genuinely fresh state
+- [ ] `memory.json`, `inbox.md`, `audit.jsonl` deleted, `sandbox/` empty, on
+      **every** branch before you start — each step needs a genuinely fresh
+      state (`audit.jsonl` only exists on `main`)
 - [ ] Say the analogy table ONCE, early, then trust it — don't re-teach the
       mapping every step, just say "the engine" / "the car" from then on
 - [ ] Say the "notice the spinner/token line" callout ONCE, in Step 1, then
