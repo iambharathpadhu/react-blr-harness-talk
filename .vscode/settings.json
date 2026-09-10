@@ -1,8 +1,8 @@
 {
-  // Use the TypeScript that ships in node_modules, not whatever VS Code bundles.
-  // A fresh clone shows red squiggles until `npm install` has run — that's
+  // A fresh clone shows TS squiggles until `npm install` has run — that's
   // @types/node and tsx missing, not a bug in the code. Run `bratcode doctor`.
-  "typescript.tsdk": "node_modules/typescript/lib",
+  // If squiggles persist after a `git checkout`, run
+  // "TypeScript: Restart TS Server" from the command palette once.
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.preferences.importModuleSpecifierEnding": "js",
   "files.exclude": {
