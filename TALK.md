@@ -33,7 +33,7 @@ One VS Code window for the whole talk — don't alt-tab between apps live.
 - **Top pane:** VS Code editor, showing whichever file the current step is
   about (see each step's "Screen setup" line below).
 - **Bottom pane:** VS Code's own integrated terminal, split into two:
-  - **Left terminal:** where you actually run `npm run demo` and type into
+  - **Left terminal:** where you actually run `bratcode` and type into
     the conversation.
   - **Right terminal:** stays on the project root, idle, for `git checkout`
     and `ollama ps`, so the left terminal's conversation log never gets
@@ -45,16 +45,14 @@ One VS Code window for the whole talk — don't alt-tab between apps live.
   (durable execution) on top of everything from step 5. Moving between steps
   live is a **`git checkout <branch>`**, not a flag or a file edit — that's
   the whole point of building it this way.
-- **In the right terminal, before Step 1, while still on `main`, run:**
-  ```
-  source demo/aliases.sh
-  ```
-  This loads `step1` … `step5`, `step6` (same as `step-back` — both check out
-  `main`), and `reset-demo` as shell aliases for the rest of this terminal
-  session — so switching steps on stage is one short word, not a long branch
-  name you have to type correctly under pressure. Run `reset-demo` after
-  checking out each branch to clear `memory.json`/`checkpoint.json`/`sandbox/`
-  before that step's demo.
+- **Before the talk (once, not on stage), run `./demo/install-bratcode.sh`.**
+  From then on the whole talk is one command: `bratcode` runs the harness on
+  whatever branch you're on, `bratcode step1` … `bratcode step6` check out
+  that step's branch **and** wipe `memory.json`/`checkpoint.json`/`sandbox/`
+  for a fresh run, `bratcode durable` is the step-6 demo, `bratcode reset`
+  clears state without switching branches. Switching steps on stage is one
+  short word, not a long branch name typed under pressure. Run
+  `bratcode doctor` in the right terminal before doors open.
 - `main` *also* carries autonomous mode, an audit trail, and a session
   budget — genuinely built and tested, but not part of today's live script.
   See **Bonus material** at the bottom if there's time or someone asks.
@@ -127,15 +125,26 @@ tools). Then say the line that frames the whole talk:
 
 **Slide:** the analogy table, engine/car/tools rows only.
 
-### Prove it's not calling out to anyone (1 min, right after the analogy)
+### The engine we're using: Ollama + qwen2.5:7b, on this laptop (1 min, right after the analogy)
+
+**Slide:** "The Engine" — the engine-block illustration on the left; on the
+right, the two facts: **Ollama** is the engine bay (a local model server on
+`localhost:11434`), **qwen2.5:7b** is the engine itself (a 7-billion-parameter
+open model, ~4.7 GB, running on this laptop's GPU). No API key, no cloud,
+$0.00 per token.
 
 **Screen setup:** stay on `main` for this one beat, before checking out
 `step-1-bare-model` — `demo/open-act.sh ollama` shows `harness/model.ts`.
 
 **Say:**
 
-> "One more thing before we start the engine — literally. Everything today
-> runs on my laptop. No API key, nothing leaves this machine."
+> "Let's name the engine before we start it. Today the engine is
+> **qwen2.5:7b** — a seven-billion-parameter open model — running inside
+> **Ollama** on this laptop. Not Claude, not GPT, nothing in the cloud.
+> That's deliberate: the point of the talk is that the harness is what
+> matters, so I want the engine to be the most ordinary, replaceable part
+> on stage. Everything today runs on my laptop. No API key, nothing leaves
+> this machine."
 
 - Point at `model.ts` on screen: `OLLAMA_URL` defaults to `localhost:11434`,
   and `HARNESS_MODEL` defaults to **`qwen2.5:7b`** — that's the model
@@ -160,8 +169,7 @@ tools). Then say the line that frames the whole talk:
   Say it once here, then let the audience just watch it repeat for free the
   rest of the talk.
 
-Now: `source demo/aliases.sh` in the right terminal (see Screen setup above)
-before you check out Step 1.
+Now: `bratcode step1` in the right terminal before you start Step 1.
 
 ---
 
@@ -184,8 +192,8 @@ before you check out Step 1.
 
 ## Step 1 — Bare Model (1.5-2 min)
 
-**Screen setup:** `step1` (checks out `step-1-bare-model`), then
-`code bin/repl.ts`. This branch is two files — `bin/repl.ts` and
+**Screen setup:** `bratcode step1` (checks out `step-1-bare-model` and
+resets state), then `code bin/repl.ts`. This branch is two files — `bin/repl.ts` and
 `harness/model.ts` — read the whole thing on screen, there's nothing hidden.
 
 **Say:**
@@ -195,8 +203,7 @@ before you check out Step 1.
 
 **Live demo:**
 ```bash
-reset-demo
-npm run demo
+bratcode
 ```
 - Ask it to read a file, or remember something. It can't — there is
   genuinely no mechanism here for it to affect anything outside generating
@@ -224,7 +231,7 @@ npm run demo
 
 ## Step 2 — The Car Shell (0.5-1 min, keep this fast)
 
-**Screen setup:** `step2`, then glance at `harness/runtime.ts` and
+**Screen setup:** `bratcode step2`, then glance at `harness/runtime.ts` and
 `harness/system-prompt.ts`.
 
 **Say:**
@@ -249,7 +256,7 @@ shape." Move on quickly; this step earns its keep later, not now.
 
 ## Step 3 — Tools, No Permission (3.5-4.5 min)
 
-**Screen setup:** `step3`, then `code harness/runtime.ts` — point at the
+**Screen setup:** `bratcode step3`, then `code harness/runtime.ts` — point at the
 loop: call the model, if it wants a tool run it immediately, feed the result
 back, repeat.
 
@@ -269,8 +276,7 @@ repeat
 
 **Live demo:**
 ```bash
-reset-demo
-npm run demo
+bratcode
 ```
 - Ask it to write a file, then delete it. Watch it just... do both. No
   pause, no confirmation. Point at the new `→` preview line under each
@@ -299,7 +305,7 @@ npm run demo
 
 ## Step 4 — Tiered Permissions (5.5-6.5 min)
 
-**Screen setup:** `step4`, then `code harness/tools.ts` — jump straight to
+**Screen setup:** `bratcode step4`, then `code harness/tools.ts` — jump straight to
 the `tierOf` map. Point out it's a plain object literal, nothing clever, and
 that's the whole point.
 
@@ -332,8 +338,7 @@ only living in a source file.
 
 **Live demo:**
 ```bash
-reset-demo
-npm run demo
+bratcode
 ```
 - Ask it to write a file → confirm prompt appears → say **no** → show nothing
   happened
@@ -356,7 +361,7 @@ npm run demo
 
 ## Step 5 — Persistent Memory (5.5-6.5 min)
 
-**Screen setup:** `step5`, then `code harness/memory.ts`. It's eleven lines —
+**Screen setup:** `bratcode step5`, then `code harness/memory.ts`. It's eleven lines —
 let that land. Point out `remember`/`recall` just read and write a JSON file
 with `fs`, no database, no cleverness.
 
@@ -371,11 +376,10 @@ with `fs`, no database, no cleverness.
 
 **Live demo:**
 ```bash
-reset-demo
-npm run demo
+bratcode
 ```
 - Tell it: "remember that I prefer TypeScript over Python." Quit with `exit`.
-- Run `npm run demo` again — **a fresh process, a fresh engine start** — and
+- Run `bratcode` again — **a fresh process, a fresh engine start** — and
   ask "what do you know about me?" It recalls the fact with zero re-prompting.
 - Show `memory.json` on screen. It's a flat text file.
 
@@ -399,7 +403,7 @@ npm run demo
 
 ## Step 6 — Durable Execution (4-5 min)
 
-**Screen setup:** `step6` (checks out `main`), then `code bin/durable.ts` and
+**Screen setup:** `bratcode step6` (checks out `main`), then `code bin/durable.ts` and
 `code harness/checkpoint.ts` side by side — the second file is eleven lines,
 same "let it land" beat as `memory.ts` in step 5.
 
@@ -413,8 +417,7 @@ same "let it land" beat as `memory.ts` in step 5.
 
 **Live demo:**
 ```bash
-reset-demo
-npm run durable
+bratcode durable
 ```
 - This runs a fixed 3-step plan — write `step1.txt`, `step2.txt`,
   `step3.txt`. Before each step actually runs, there's a several-second
@@ -426,7 +429,7 @@ npm run durable
 - **During step 3's pre-step pause, hit `Ctrl-C`.** Nothing has run for step
   3 yet — that's the point of the pause, it gives you a safe, generous
   window to kill it on cue instead of racing a fast tool call.
-- Run `npm run durable` again. Point at the output: `checkpoint.json says:
+- Run `bratcode durable` again. Point at the output: `checkpoint.json says:
   2/3 steps already done` → `[SKIP] step 1` → `[SKIP] step 2` → straight to
   `[STEP 3/3]`, which now runs and finishes cleanly.
 - Show `checkpoint.json` on screen — same flat-file idea as `memory.json`,
@@ -521,7 +524,7 @@ hierarchy. That's the 10% you'd actually be building."
 > the actual job."
 
 **A live beat, not just a slide — do this before the Q&A slide comes up:**
-you're still sitting on Step 6's terminal, past `npm run durable`'s "All
+you're still sitting on Step 6's terminal, past `bratcode durable`'s "All
 steps complete." line — say this yourself rather than reading it off a
 slide:
 
@@ -546,9 +549,9 @@ someone asks a question that opens the door.
   the sandbox (`../../etc/hosts`) — show the harness throwing instead of
   leaking it. Line: "The car has a curb it physically can't drive over, no
   matter what the engine wants."
-- **Autonomous mode (`main`, `step-back` then `git checkout main`):** if
+- **Autonomous mode (`main`, `bratcode step6`):** if
   someone asks "what about when nobody's watching at all," this branch has
-  the answer — `npm run watch`, append lines to `inbox.md`, watch it act
+  the answer — `bratcode watch`, append lines to `inbox.md`, watch it act
   unsupervised with *stricter* tiers, and `cat audit.jsonl | jq` to show the
   audit trail. Only pull this out if there's real time and real interest —
   it's a two-terminal, timing-sensitive demo, not something to rush.
@@ -560,7 +563,7 @@ someone asks a question that opens the door.
 | Section | Low | High |
 |---|---|---|
 | Cold open (audience question + analogy) | 3.5 min | 4 min |
-| Prove it's local (Ollama) | 1 min | 1 min |
+| The engine: Ollama + qwen2.5:7b, local | 1 min | 1 min |
 | Naming the failure modes | 1.5 min | 2 min |
 | Step 1 — Bare Model (+ real-harness check) | 1.5 min | 2 min |
 | Step 2 — The Car Shell (+ real-harness check) | 0.5 min | 1 min |
@@ -591,13 +594,14 @@ thread has been building toward.
 - [ ] VS Code `code` CLI installed (Cmd+Shift+P → Shell Command: Install
       'code' command in PATH) and `demo/open-act.sh ollama` tested on that
       same laptop — don't discover this is broken on stage
-- [ ] `npm install` run once, `npm run typecheck` passing, on **every** branch
-      you'll check out live
-- [ ] `source demo/aliases.sh` rehearsed at least once, so `step1`…`step6`
-      and `reset-demo` are muscle memory before you're on stage
+- [ ] `npm install` run once, `./demo/install-bratcode.sh` run once,
+      `bratcode doctor` green, and `demo/check-all-branches.sh` clean on the
+      laptop you'll present from
+- [ ] `bratcode step1` … `bratcode step6` rehearsed at least once, so
+      switching steps is muscle memory before you're on stage
 - [ ] `memory.json`/`checkpoint.json` deleted, `sandbox/` empty, on **every**
       branch before you start — each step needs a genuinely fresh state
-      (`reset-demo` handles this once the aliases are loaded)
+      (`bratcode stepN` does this every time it switches branches)
 - [ ] Step 6's Ctrl-C timing rehearsed at least twice — confirm you can see
       `[CHECKPOINT SAVED] 2/3` print, then kill it during the next pause,
       then rerun and see both `[SKIP]` lines before step 3 actually runs

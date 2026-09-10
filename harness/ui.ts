@@ -11,17 +11,39 @@ import { styleText } from "node:util";
 export const ui = {
   you: (s: string) => styleText(["bold", "cyan"], s),
   agent: (s: string) => styleText(["bold", "magenta"], s),
-  tool: (s: string) => styleText("green", s),
+  tool: (s: string) => styleText(["bold", "green"], s),
   confirm: (s: string) => styleText(["bold", "yellow"], s),
   blocked: (s: string) => styleText(["bold", "red"], s),
   refused: (s: string) => styleText("red", s),
   denied: (s: string) => styleText("gray", s),
   skipped: (s: string) => styleText("yellow", s),
   dim: (s: string) => styleText("gray", s),
+  accent: (s: string) => styleText(["bold", "yellowBright"], s),
   banner: (s: string) => styleText(["bold", "white"], s),
   wake: (s: string) => styleText(["bold", "cyan"], s),
   checkpoint: (s: string) => styleText(["bold", "blue"], s),
 };
+
+// Every status tag the harness prints — [POLICY], [RUN], [CONFIRM], … — is
+// padded to the same width so the column of tags lines up on screen and the
+// audience can scan down it instead of hunting for the bracket.
+const TAG_WIDTH = 12;
+export function tag(label: string): string {
+  return `[${label}]`.padEnd(TAG_WIDTH);
+}
+
+// The header printed at the top of every entrypoint: which step of the
+// build this is, and which engine (model) is under the hood. Boxed so it
+// reads as a title card on the projector, not just another log line.
+export function header(step: string, model: string): string {
+  const title = `harness-demo · ${step}`;
+  const engine = `engine: ${model} · via Ollama on localhost · $0.00`;
+  const inner = Math.max(title.length, engine.length) + 2;
+  const line = "─".repeat(inner);
+  const row = (text: string, paint: (s: string) => string) =>
+    `${ui.dim("│")} ${paint(text)}${" ".repeat(inner - 1 - text.length)}${ui.dim("│")}`;
+  return [ui.dim(`╭${line}╮`), row(title, ui.banner), row(engine, ui.dim), ui.dim(`╰${line}╯`)].join("\n");
+}
 
 // Flavor text for the thinking spinner below — same idea as Claude Code's
 // own rotating status verbs, just with the serial numbers filed off.
@@ -58,30 +80,46 @@ export const DURABLE_JOKES = [
 ];
 
 const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-const JOKE_SWAP_MS = 1800;
-const FRAME_MS = 150;
+const JOKE_SWAP_MS = 2600; // long enough to actually read from the back row
+const FRAME_MS = 120;
 
 // A local model can take several seconds per round-trip. A live-updating
-// spinner — new joke every ~1.8s, elapsed seconds ticking — reads as "the
-// harness is alive" the way a single static "..." doesn't, especially at
-// qwen's multi-second tool-calling latency.
+// spinner — a fresh joke every ~2.6s, elapsed seconds ticking — reads as
+// "the harness is alive" the way a single static "..." doesn't, especially
+// at qwen's multi-second tool-calling latency.
+//
+// Rendering rules, learned the hard way on a projector:
+//   - the joke is drawn in a bright accent, not dim gray, so it's legible
+//   - the line is truncated to the real terminal width so it never wraps —
+//     a wrapped spinner line leaves a smeared copy of itself behind on
+//     every redraw
+//   - each redraw clears the whole line (ESC[2K) before writing, so a
+//     shorter joke never shows the tail of the previous, longer one
+//   - jokes rotate in order, not at random, so the same line can't come up
+//     twice in a row
 export function spinner(jokes: string[]): () => void {
   const start = Date.now();
   let frame = 0;
-  let joke = jokes[Math.floor(Math.random() * jokes.length)];
+  let jokeIndex = Math.floor(Math.random() * jokes.length);
   let lastSwap = start;
 
   const render = () => {
-    const elapsed = Math.floor((Date.now() - start) / 1000);
-    const line = `  ${SPINNER_FRAMES[frame % SPINNER_FRAMES.length]} ${joke} ${elapsed}s`;
-    process.stdout.write("\r" + ui.dim(line));
+    const elapsed = `${Math.floor((Date.now() - start) / 1000)}s`.padStart(3);
+    const columns = process.stdout.columns ?? 80;
+    const glyph = SPINNER_FRAMES[frame % SPINNER_FRAMES.length];
+    // Budget: 2 indent + glyph + space + joke + space + elapsed, minus 1 so
+    // the cursor never sits in the last column (some terminals wrap there).
+    const maxJoke = Math.max(8, columns - (2 + 1 + 1 + 1 + elapsed.length) - 1);
+    let joke = jokes[jokeIndex];
+    if (joke.length > maxJoke) joke = `${joke.slice(0, maxJoke - 1)}…`;
+    process.stdout.write(`\r\x1b[2K  ${ui.accent(glyph)} ${ui.accent(joke)} ${ui.dim(elapsed)}`);
   };
 
   render();
   const timer = setInterval(() => {
     frame++;
     if (Date.now() - lastSwap > JOKE_SWAP_MS) {
-      joke = jokes[Math.floor(Math.random() * jokes.length)];
+      jokeIndex = (jokeIndex + 1) % jokes.length;
       lastSwap = Date.now();
     }
     render();
@@ -89,10 +127,7 @@ export function spinner(jokes: string[]): () => void {
 
   return () => {
     clearInterval(timer);
-    // Clear width is hardcoded well past any joke line's length, not
-    // derived from .length — ANSI color codes inflate that count past
-    // what's actually visible on screen.
-    process.stdout.write("\r" + " ".repeat(100) + "\r");
+    process.stdout.write("\r\x1b[2K");
   };
 }
 

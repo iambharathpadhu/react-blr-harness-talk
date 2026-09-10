@@ -19,8 +19,11 @@ brew services start ollama
 ollama pull qwen2.5:7b      # good tool-calling behavior, ~4.7GB
 # ollama pull llama3.2:3b   # faster fallback if qwen is too slow on your laptop
 
-npm install
-npm run typecheck           # sanity check
+npm install                 # do this BEFORE opening the folder in VS Code —
+                            # a fresh clone shows TS squiggles until @types/node
+                            # and tsx are installed. They're not real errors.
+./demo/install-bratcode.sh  # puts the `bratcode` command on your PATH (no sudo)
+bratcode doctor             # node_modules, typecheck, Ollama up, model pulled
 ```
 
 **Use `qwen2.5:7b` for the live talk. This isn't a mild preference — it's
@@ -39,11 +42,21 @@ finishes each step inside the pause.
 
 ## Running it
 
+Everything runs through one command, `bratcode` (installed by
+`demo/install-bratcode.sh` as a symlink to `bin/bratcode`, so it keeps
+working as you `git checkout` between step branches):
+
 ```bash
-npm run demo      # tiered permissions + persistent memory (steps 1-5)
-npm run durable   # step 6: durable execution — checkpoint + crash + resume
-npm run watch     # bonus, not part of the live talk: autonomous mode
+bratcode            # the interactive harness on whatever branch you're on
+bratcode durable    # step 6: durable execution — checkpoint + crash + resume
+bratcode watch      # bonus, not part of the live talk: autonomous mode
+bratcode reset      # wipe memory.json / checkpoint.json / sandbox for a fresh run
+bratcode step1      # git checkout step-1-bare-model, then reset (…step2 … step6)
+bratcode doctor     # preflight check — run it before you walk on stage
 ```
+
+`npm run demo` / `npm run durable` / `npm run watch` still work if you'd
+rather not install anything.
 
 For the live talk, `demo/open-act.sh ollama` jumps VS Code straight to the
 relevant file+line, so the code is visible on screen next to the terminal
@@ -51,10 +64,9 @@ instead of just narrated. Requires the `code` CLI (VS Code: Cmd+Shift+P →
 "Shell Command: Install 'code' command in PATH") — install and test this
 before the talk, not on stage.
 
-`demo` and `durable` both read/write `memory.json`/`checkpoint.json` and a
-`sandbox/` directory in the project root — delete those files any time to
-reset to a "first run" state for a rehearsal (`demo/aliases.sh`'s
-`reset-demo` does this in one command). `durable` runs a fixed 3-step plan
+`bratcode` and `bratcode durable` both read/write `memory.json`/`checkpoint.json`
+and a `sandbox/` directory in the project root — `bratcode reset` clears them
+to a "first run" state for a rehearsal. `bratcode durable` runs a fixed 3-step plan
 and writes `checkpoint.json` the instant each step finishes — kill the
 process (`Ctrl-C`) during the pause before a step runs, then run it again:
 completed steps are skipped, not redone. `watch` (bonus, not demoed live)
@@ -74,10 +86,16 @@ harness/
   system-prompt.ts    what the agent is told, including recalled memory
   runtime.ts          the loop: model -> tool calls -> tier gate -> repeat
   audit.ts            append-only audit.jsonl of every policy decision
+  ui.ts               terminal styling: the boxed header, aligned tags, spinner
 bin/
+  bratcode            the one CLI: repl / durable / watch / reset / stepN / doctor
   repl.ts            interactive entrypoint (the finished harness)
   durable.ts          step 6: checkpointed plan, survives a mid-run crash
   watch.ts            bonus: autonomous entrypoint (no human typing)
+demo/
+  install-bratcode.sh symlink bin/bratcode onto your PATH
+  check-all-branches.sh typecheck every step branch in talk order
+  open-act.sh         jump VS Code to a file:line during the talk
 ```
 
 Read `harness/runtime.ts` first — it's the whole loop in one screen, and
@@ -105,17 +123,19 @@ undemoed autonomous-mode layer (see below).
 | 6 | `main` (this branch) | Durable execution: a fixed multi-step plan checkpoints its progress to disk after every step. Crash mid-plan, restart, and it resumes instead of starting over. |
 | 7 (bonus) | `main` (this branch) | Autonomous mode, an audit trail, and a session budget. The agent can act with nobody watching — and gets *stricter* defaults, not looser ones. Not part of the live talk; explore it yourself. |
 
-Try it yourself: `git checkout step-1-bare-model`, run `npm run demo`, work
-your way up through the branches one `git checkout` at a time. Full talk
+Try it yourself: `bratcode step1`, then `bratcode`, and work your way up
+through the branches one `bratcode stepN` at a time. Full talk
 script and speaker notes for presenting this live are in [TALK.md](TALK.md).
 
 ## Rehearsal checklist
 
 - [ ] `ollama serve` running and reachable before doors open — don't rely on
       venue wifi for anything, this whole demo is offline-capable on purpose
+- [ ] `bratcode doctor` green on the presenting laptop, and
+      `demo/check-all-branches.sh` clean
 - [ ] `memory.json`, `checkpoint.json`, and `inbox.md` deleted, `sandbox/`
       empty, on **every** branch before you start — each step needs a
-      genuinely fresh state
+      genuinely fresh state (`bratcode stepN` does this for you)
 - [ ] Step 6's Ctrl-C-then-resume rehearsed at least twice — see TALK.md for
       exact timing
 - [ ] test every branch in the sequence you'll actually present them in, on

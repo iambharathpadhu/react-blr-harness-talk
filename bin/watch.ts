@@ -15,7 +15,7 @@ import { runTurn } from "../harness/runtime.js";
 import { recall } from "../harness/memory.js";
 import { systemPrompt } from "../harness/system-prompt.js";
 import { logAudit } from "../harness/audit.js";
-import { ui, formatTokens, AUTONOMOUS_JOKES } from "../harness/ui.js";
+import { ui, header, formatTokens, AUTONOMOUS_JOKES } from "../harness/ui.js";
 
 const INBOX = "inbox.md";
 const POLL_MS = 3000;
@@ -38,7 +38,7 @@ async function main() {
   let seen = fs.readFileSync(INBOX, "utf-8").split("\n").filter(Boolean).length;
   let budgetExceeded = false;
 
-  console.log(ui.banner(`harness-demo · step 6 · autonomous (cruise control) · ${MODEL}`));
+  console.log(header("bonus · autonomous mode (cruise control)", MODEL));
   console.log(ui.dim(`watching ${INBOX} every ${POLL_MS}ms — append a line to trigger the agent`));
   console.log(ui.dim(`e.g.: echo "list files in the sandbox" >> ${INBOX}`) + "\n");
 

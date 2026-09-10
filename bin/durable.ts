@@ -16,7 +16,7 @@ import { chat, type ChatMessage } from "../harness/model.js";
 import { runTool } from "../harness/tools.js";
 import { loadCheckpoint, markStepDone } from "../harness/checkpoint.js";
 import { logAudit } from "../harness/audit.js";
-import { ui, spinner, preview, DURABLE_JOKES } from "../harness/ui.js";
+import { ui, tag, header, spinner, preview, DURABLE_JOKES } from "../harness/ui.js";
 
 const MODEL = process.env.HARNESS_MODEL ?? "qwen2.5:7b";
 const PAUSE_MS = Number(process.env.HARNESS_STEP_PAUSE_MS ?? 4000);
@@ -56,7 +56,7 @@ async function pauseWithCountdown(ms: number): Promise<void> {
 }
 
 async function runStep(stepNumber: number, instruction: string): Promise<void> {
-  console.log(`\n${ui.checkpoint(`[STEP ${stepNumber}/${PLAN.length}]`)} ${instruction}`);
+  console.log(`\n${ui.checkpoint(tag(`STEP ${stepNumber}/${PLAN.length}`))}${instruction}`);
   await pauseWithCountdown(PAUSE_MS);
 
   const messages: ChatMessage[] = [
@@ -67,36 +67,36 @@ async function runStep(stepNumber: number, instruction: string): Promise<void> {
 
   const call = reply.tool_calls?.[0];
   if (!call) {
-    console.log(`  ${ui.refused("[NO TOOL CALL]")} ${ui.dim(reply.content)}`);
+    console.log(`  ${ui.refused(tag("NO TOOL"))}${ui.dim(reply.content)}`);
     return;
   }
   const { name, arguments: args } = call.function;
-  console.log(`  ${ui.tool("[RUN]")} ${ui.dim(`${name}(${JSON.stringify(args)})`)}`);
+  console.log(`  ${ui.tool(tag("RUN"))}${ui.dim(`${name}(${JSON.stringify(args)})`)}`);
   const result = await runTool(name, args);
-  console.log(`      ${ui.dim(`→ ${preview(result)}`)}`);
+  console.log(`  ${" ".repeat(12)}${ui.dim(`→ ${preview(result)}`)}`);
 
   // The whole trick: write the checkpoint NOW, before returning to the
   // caller's loop — not batched at the end, not after all three steps.
   markStepDone(stepNumber);
   logAudit({ tool: "checkpoint", outcome: "run", detail: `step ${stepNumber}/${PLAN.length} saved to checkpoint.json` });
-  console.log(`  ${ui.checkpoint("[CHECKPOINT SAVED]")} ${ui.dim(`${stepNumber}/${PLAN.length} — safe to crash from here on, this step won't repeat`)}`);
+  console.log(`  ${ui.checkpoint(tag("SAVED"))}${ui.dim(`checkpoint ${stepNumber}/${PLAN.length} — safe to crash from here on, this step won't repeat`)}`);
 }
 
 async function main() {
-  console.log(ui.banner(`harness-demo · step 6 · durable execution · ${MODEL}`));
+  console.log(header("step 6 · durable execution", MODEL));
   const cp = loadCheckpoint();
   console.log(ui.dim(`checkpoint.json says: ${cp.completedSteps}/${PLAN.length} steps already done`) + "\n");
 
   for (let i = 0; i < PLAN.length; i++) {
     const stepNumber = i + 1;
     if (stepNumber <= cp.completedSteps) {
-      console.log(`${ui.dim(`[SKIP] step ${stepNumber} — already completed before a previous exit/crash`)}`);
+      console.log(`  ${ui.dim(tag("SKIP"))}${ui.dim(`step ${stepNumber} — already completed before a previous exit/crash`)}`);
       continue;
     }
     await runStep(stepNumber, PLAN[i].instruction);
   }
 
-  console.log(`\n${ui.banner("All steps complete.")} ${ui.dim("Nothing left to resume — run `rm checkpoint.json sandbox/step*.txt` to start over.")}`);
+  console.log(`\n${ui.banner("All steps complete.")} ${ui.dim("Nothing left to resume — run `bratcode reset` to start over.")}`);
   process.exit(0);
 }
 

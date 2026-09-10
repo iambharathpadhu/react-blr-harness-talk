@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// Interactive demo entrypoint — the finished harness (step 6 of the build,
-// see README.md). Tiered permissions + persistent memory are both active.
+// Interactive demo entrypoint — the finished harness (main = step 6 of the
+// build, see README.md). Tiered permissions + persistent memory are both
+// active; `bratcode durable` is the step-6 checkpoint demo itself.
 //
 // Quit with Ctrl-C or "exit", then restart the same command to see what
 // survived the process dying.
@@ -11,7 +12,7 @@ import type { ChatMessage, ChatUsage } from "../harness/model.js";
 import { runTurn } from "../harness/runtime.js";
 import { recall } from "../harness/memory.js";
 import { systemPrompt } from "../harness/system-prompt.js";
-import { ui, formatTokens, INTERACTIVE_JOKES } from "../harness/ui.js";
+import { ui, header, formatTokens, INTERACTIVE_JOKES } from "../harness/ui.js";
 
 const MODEL = process.env.HARNESS_MODEL ?? "qwen2.5:7b";
 
@@ -20,7 +21,7 @@ async function main() {
   const messages: ChatMessage[] = [{ role: "system", content: systemPrompt(knownFacts) }];
   const session: ChatUsage = { promptTokens: 0, completionTokens: 0 };
 
-  console.log(ui.banner(`harness-demo · step 6 · autonomous harness · ${MODEL}`));
+  console.log(header("step 6 · the finished harness", MODEL));
   console.log(
     ui.dim(
       knownFacts.length
