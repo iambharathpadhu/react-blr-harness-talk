@@ -16,7 +16,7 @@ import type readline from "node:readline/promises";
 import { chat, type ChatMessage, type ChatUsage } from "./model.js";
 import { toolSchemas, runTool, tierOf, type Tier } from "./tools.js";
 import { confirm } from "./permissions.js";
-import { ui, spinner, preview, INTERACTIVE_JOKES } from "./ui.js";
+import { ui, tag, spinner, preview, INTERACTIVE_JOKES } from "./ui.js";
 
 const MAX_STEPS = 8;
 
@@ -45,31 +45,31 @@ export async function runTurn(
       // Say the decision out loud before acting on it — the harness picking
       // a tier is its own visible event, not something implied only by
       // which branch runs next.
-      console.log(`  ${ui.dim(`[POLICY] ${tier}`)}`);
+      console.log(`  ${ui.dim(tag("POLICY"))}${ui.dim(tier)}`);
 
       if (tier === "blocked") {
-        console.log(`  ${ui.blocked("[BLOCKED]")} ${ui.dim(`"${name}" never runs.`)}`);
+        console.log(`  ${ui.blocked(tag("BLOCKED"))}${ui.dim(`"${name}" never runs.`)}`);
         messages.push({ role: "tool", tool_name: name, content: "BLOCKED by harness policy." });
         continue;
       }
 
       if (tier === "confirm") {
-        const ok = await confirm(rl, `  ${ui.confirm("[CONFIRM]")} run ${ui.dim(`${name}(${JSON.stringify(args)})`)}?`);
+        const ok = await confirm(rl, `  ${ui.confirm(tag("CONFIRM"))}run ${ui.dim(`${name}(${JSON.stringify(args)})`)}?`);
         if (!ok) {
-          console.log(`  ${ui.denied("[DENIED]")}`);
+          console.log(`  ${ui.denied(tag("DENIED"))}${ui.dim("nothing happened.")}`);
           messages.push({ role: "tool", tool_name: name, content: "Denied by user." });
           continue;
         }
       }
 
-      console.log(`  ${ui.tool("[RUN]")} ${ui.dim(`${name}(${JSON.stringify(args)})`)}`);
+      console.log(`  ${ui.tool(tag("RUN"))}${ui.dim(`${name}(${JSON.stringify(args)})`)}`);
       try {
         const result = await runTool(name, args);
-        console.log(`      ${ui.dim(`→ ${preview(result)}`)}`);
+        console.log(`  ${" ".repeat(12)}${ui.dim(`→ ${preview(result)}`)}`);
         messages.push({ role: "tool", tool_name: name, content: result });
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
-        console.log(`  ${ui.refused("[REFUSED]")} ${ui.dim(message)}`);
+        console.log(`  ${ui.refused(tag("REFUSED"))}${ui.dim(message)}`);
         messages.push({ role: "tool", tool_name: name, content: `Refused: ${message}` });
       }
     }

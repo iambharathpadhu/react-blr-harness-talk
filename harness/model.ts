@@ -31,11 +31,21 @@ export async function chat(
   messages: ChatMessage[],
   tools: unknown[],
 ): Promise<{ message: ChatMessage; usage: ChatUsage }> {
-  const res = await fetch(`${OLLAMA_URL}/api/chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model: MODEL, messages, tools, stream: false, options: SAMPLING }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${OLLAMA_URL}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ model: MODEL, messages, tools, stream: false, options: SAMPLING }),
+    });
+  } catch {
+    // The single most likely failure on a fresh laptop: nothing is listening
+    // on the port. Say exactly what to run instead of dumping a fetch stack.
+    throw new Error(
+      `Can't reach Ollama at ${OLLAMA_URL}. Start it with "brew services start ollama" ` +
+        `(or "ollama serve"), then run "bratcode doctor".`,
+    );
+  }
 
   if (!res.ok) {
     throw new Error(
