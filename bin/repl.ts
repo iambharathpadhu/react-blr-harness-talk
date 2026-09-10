@@ -9,7 +9,7 @@
 import readline from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 import { chat, type ChatMessage, type ChatUsage } from "../harness/model.js";
-import { ui, spinner, formatTokens, INTERACTIVE_JOKES } from "../harness/ui.js";
+import { ui, header, spinner, formatTokens, INTERACTIVE_JOKES } from "../harness/ui.js";
 
 const MODEL = process.env.HARNESS_MODEL ?? "qwen2.5:7b";
 
@@ -19,7 +19,7 @@ async function main() {
   ];
   const session: ChatUsage = { promptTokens: 0, completionTokens: 0 };
 
-  console.log(ui.banner(`harness-demo · step 1 · bare model · ${MODEL}`));
+  console.log(header("step 1 · bare model", MODEL));
   console.log(ui.dim("type 'exit' to quit") + "\n");
 
   const rl = readline.createInterface({ input: stdin, output: stdout });

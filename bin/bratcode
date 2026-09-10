@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+# bratcode — the one command for the whole talk.
+#
+#   bratcode            interactive harness (the repl) on the current branch
+#   bratcode durable    step 6: durable execution — checkpoint, crash, resume
+#   bratcode watch      bonus: autonomous mode (main only)
+#   bratcode reset      wipe memory.json / checkpoint.json / sandbox for a fresh run
+#   bratcode step1..6   git checkout that step's branch, then reset
+#   bratcode doctor     preflight: node_modules, Ollama up, model pulled, code CLI
+#   bratcode help
+#
+# Install once with demo/install-bratcode.sh — it symlinks this file onto
+# your PATH, so `git checkout` between step branches never breaks it as long
+# as every branch carries bin/bratcode (they all do).
+
+set -euo pipefail
+
+# Resolve the repo root from this script's real location, through the symlink.
+SELF="${BASH_SOURCE[0]}"
+while [ -L "$SELF" ]; do
+  DIR="$(cd -P "$(dirname "$SELF")" && pwd)"
+  SELF="$(readlink "$SELF")"
+  [[ "$SELF" != /* ]] && SELF="$DIR/$SELF"
+done
+ROOT="$(cd -P "$(dirname "$SELF")/.." && pwd)"
+cd "$ROOT"
+
+MODEL="${HARNESS_MODEL:-qwen2.5:7b}"
+OLLAMA_URL="${OLLAMA_URL:-http://localhost:11434}"
+
+bold() { printf '\033[1m%s\033[0m\n' "$*"; }
+ok()   { printf '  \033[32m✔\033[0m %s\n' "$*"; }
+warn() { printf '  \033[33m▲\033[0m %s\n' "$*"; }
+bad()  { printf '  \033[31m✘\033[0m %s\n' "$*"; }
+
+need_deps() {
+  if [ ! -d node_modules/tsx ]; then
+    bad "node_modules missing — run: npm install   (then re-run bratcode)"
+    exit 1
+  fi
+}
+
+run_ts() {
+  local entry="$1"; shift
+  if [ ! -f "$entry" ]; then
+    bad "$entry does not exist on branch '$(git branch --show-current)'."
+    warn "This mode lives on main: bratcode step6"
+    exit 1
+  fi
+  need_deps
+  exec node_modules/.bin/tsx "$entry" "$@"
+}
+
+reset_state() {
+  rm -f memory.json checkpoint.json audit.jsonl inbox.md
+  find sandbox -type f ! -name .gitkeep -delete 2>/dev/null || true
+  ok "fresh state: memory.json, checkpoint.json, audit.jsonl, inbox.md, sandbox/* cleared"
+}
+
+checkout_step() {
+  local branch="$1"
+  git checkout -q "$branch"
+  ok "on $(git branch --show-current)"
+  reset_state
+}
+
+doctor() {
+  bold "bratcode doctor — $(git branch --show-current)"
+  local fail=0
+  if [ -d node_modules/tsx ] && [ -d node_modules/typescript ]; then ok "node_modules installed"; else bad "node_modules missing → npm install"; fail=1; fi
+  if node_modules/.bin/tsc --noEmit >/dev/null 2>&1; then ok "typecheck clean on this branch"; else bad "typecheck failing → npm run typecheck"; fail=1; fi
+  if curl -sf "$OLLAMA_URL/api/tags" >/dev/null 2>&1; then
+    ok "Ollama reachable at $OLLAMA_URL"
+    if curl -sf "$OLLAMA_URL/api/tags" | grep -q "\"name\":\"$MODEL\""; then ok "model pulled: $MODEL"; else bad "model not pulled → ollama pull $MODEL"; fail=1; fi
+  else
+    bad "Ollama not reachable at $OLLAMA_URL → brew services start ollama"; fail=1
+  fi
+  if command -v code >/dev/null 2>&1; then ok "VS Code 'code' CLI on PATH"; else warn "'code' CLI missing (Cmd+Shift+P → Shell Command: Install 'code' command in PATH) — only needed for demo/open-act.sh"; fi
+  if [ -f memory.json ] || [ -f checkpoint.json ] || find sandbox -type f ! -name .gitkeep | grep -q .; then warn "leftover demo state present → bratcode reset"; else ok "state is fresh"; fi
+  [ $fail -eq 0 ] && bold "ready." || { bold "not ready — fix the ✘ lines above."; exit 1; }
+}
+
+usage() { sed -n '2,13p' "$SELF" | sed 's/^# \{0,1\}//'; }
+
+case "${1:-}" in
+  ""|repl|demo)  run_ts bin/repl.ts ;;
+  durable)       run_ts bin/durable.ts ;;
+  watch)         run_ts bin/watch.ts ;;
+  reset)         reset_state ;;
+  doctor)        doctor ;;
+  step1)         checkout_step step-1-bare-model ;;
+  step2)         checkout_step step-2-the-car-shell ;;
+  step3)         checkout_step step-3-tools-no-permission ;;
+  step4)         checkout_step step-4-tiered-permissions ;;
+  step5)         checkout_step step-5-persistent-memory ;;
+  step6|main)    checkout_step main ;;
+  help|-h|--help) usage ;;
+  *) bad "unknown command: $1"; usage; exit 1 ;;
+esac
