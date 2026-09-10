@@ -40,22 +40,24 @@ One VS Code window for the whole talk — don't alt-tab between apps live.
     cluttered.
 - Before the talk, run **Cmd+Shift+P → "Shell Command: Install 'code' command
   in PATH"** once. Test it now, not on stage.
-- This repo is **five git branches**, one per live step — `step-1-bare-model`
-  through `step-5-persistent-memory`. Moving between steps live is a
-  **`git checkout <branch>`**, not a flag or a file edit — that's the whole
-  point of building it this way.
+- This repo is **five git branches** for steps 1-5 — `step-1-bare-model`
+  through `step-5-persistent-memory` — plus **`main`**, which carries step 6
+  (durable execution) on top of everything from step 5. Moving between steps
+  live is a **`git checkout <branch>`**, not a flag or a file edit — that's
+  the whole point of building it this way.
 - **In the right terminal, before Step 1, while still on `main`, run:**
   ```
   source demo/aliases.sh
   ```
-  This loads `step1` … `step5`, `step-back`, and `reset-demo` as shell
-  aliases for the rest of this terminal session — so switching steps on
-  stage is one short word, not a long branch name you have to type correctly
-  under pressure. Run `reset-demo` after checking out each branch to clear
-  `memory.json`/`sandbox/` before that step's demo.
-- `main` has a 6th step (autonomous mode, an audit trail, a session budget)
-  that isn't part of the live script — see **Bonus material** at the bottom.
-  It's built and tested, just not demoed today.
+  This loads `step1` … `step5`, `step6` (same as `step-back` — both check out
+  `main`), and `reset-demo` as shell aliases for the rest of this terminal
+  session — so switching steps on stage is one short word, not a long branch
+  name you have to type correctly under pressure. Run `reset-demo` after
+  checking out each branch to clear `memory.json`/`checkpoint.json`/`sandbox/`
+  before that step's demo.
+- `main` *also* carries autonomous mode, an audit trail, and a session
+  budget — genuinely built and tested, but not part of today's live script.
+  See **Bonus material** at the bottom if there's time or someone asks.
 
 ---
 
@@ -167,15 +169,16 @@ before you check out Step 1.
 
 **Say:**
 
-> "So what does 'engine, no car' actually look like when you run it? Three
-> things, and I'm going to make all three concrete over the next five steps,
+> "So what does 'engine, no car' actually look like when you run it? Four
+> things, and I'm going to make all four concrete over the next six steps,
 > not just describe them."
 
-**Slide — three bullets, one line each:**
+**Slide — four bullets, one line each:**
 - Floors the accelerator the instant it's asked — no brakes, no seatbelt
 - Doesn't know the difference between "can" and "should" — every action gets
   equal trust
 - Forgets everything the second the engine turns off — no trip computer
+- A crash mid-task means starting over from zero — no memory of how far it got
 
 ---
 
@@ -392,11 +395,63 @@ npm run demo
 > ever wondered why these tools 'remember' your project's conventions across
 > completely separate conversations, this is the entire trick."
 
+---
+
+## Step 6 — Durable Execution (4-5 min)
+
+**Screen setup:** `step6` (checks out `main`), then `code bin/durable.ts` and
+`code harness/checkpoint.ts` side by side — the second file is eleven lines,
+same "let it land" beat as `memory.ts` in step 5.
+
+**Say:**
+
+> "One more thing a car has that an engine doesn't: if it stalls halfway down
+> the highway, you don't tow it back to the driveway and start the trip
+> over. You resume from wherever it stalled. Same idea here — but this time
+> it's not remembering a fact about you, it's remembering *how far through a
+> task it got.*"
+
+**Live demo:**
+```bash
+reset-demo
+npm run durable
+```
+- This runs a fixed 3-step plan — write `step1.txt`, `step2.txt`,
+  `step3.txt`. Before each step actually runs, there's a several-second
+  pause with its own spinner text ("safe to crash right now") — that pause
+  is your cue.
+- Let step 1 and step 2 finish — you'll see `[CHECKPOINT SAVED] 1/3` and
+  `2/3` print, each one written to `checkpoint.json` the instant that step
+  finished, before step 3 even starts.
+- **During step 3's pre-step pause, hit `Ctrl-C`.** Nothing has run for step
+  3 yet — that's the point of the pause, it gives you a safe, generous
+  window to kill it on cue instead of racing a fast tool call.
+- Run `npm run durable` again. Point at the output: `checkpoint.json says:
+  2/3 steps already done` → `[SKIP] step 1` → `[SKIP] step 2` → straight to
+  `[STEP 3/3]`, which now runs and finishes cleanly.
+- Show `checkpoint.json` on screen — same flat-file idea as `memory.json`,
+  just tracking "how far" instead of "what facts."
+
+**Say, landing the step:**
+
+> "The crash didn't cost us the whole trip — it cost us nothing, because the
+> car wrote down exactly where it was the instant it got there. That's
+> durable execution: not 'don't crash,' but 'a crash doesn't mean starting
+> over.'"
+
+**Real harness check:**
+
+> "This is the same idea behind Claude Code's own auto-compact and session
+> resume, and behind Temporal/durable-workflow engines used for long AI
+> pipelines in production — checkpoint state on the way through a multi-step
+> job, not just at the very end. Anything that can fail partway through
+> needs a definition of 'partway' that survives the failure."
+
 **Say, landing the whole build:**
 
-> "Five steps, five branches, and every single one of them is a `git diff`
-> away from proving exactly what it added. That's the harness. Let's talk
-> about who builds this stuff in practice."
+> "Six steps, six branches worth of capability, and every single one of them
+> is a `git diff` away from proving exactly what it added. That's the
+> harness. Let's talk about who builds this stuff in practice."
 
 ---
 
@@ -404,30 +459,29 @@ npm run demo
 
 **Say:**
 
-> "Everything you just watched me build by hand across five steps — the
-> loop, the tiers, the odometer — is what Claude Code and Codex hand you as
-> a finished car, and what LangGraph, Mastra, and every agent SDK hand you
-> as a car kit if you're building your own. That's fine! Most of the time
-> you want a factory car, not a kit car. But when it breaks, or behaves in a
-> way you didn't expect, you need to know what's actually under the hood —
-> and now you do, because you just built one from parts, one git branch at a
-> time."
+> "Everything you just watched me build by hand across six steps — the
+> loop, the tiers, the odometer, the checkpoint — is what Claude Code and
+> Codex hand you as a finished car, and what LangGraph, Mastra, and every
+> agent SDK hand you as a car kit if you're building your own. That's fine!
+> Most of the time you want a factory car, not a kit car. But when it
+> breaks, or behaves in a way you didn't expect, you need to know what's
+> actually under the hood — and now you do, because you just built one from
+> parts, one git branch at a time."
 
 **Slide — one line each:**
-- What you built by hand today: a loop, mediated tools, a memory file —
-  five branches, `git diff` between any two shows exactly what capability
-  was added
-- What a framework hands you for free: the same three things, pre-assembled
+- What you built by hand today: a loop, mediated tools, a memory file, a
+  checkpointed plan — six branches, `git diff` between any two shows exactly
+  what capability was added
+- What a framework hands you for free: the same four things, pre-assembled
 - What no framework can hand you: **your** tier map, **your** memory schema,
   **your** answer for "what happens with no driver watching"
-- One step further than today: `main` in this same repo adds autonomous mode
-  — the harness acting with nobody typing — plus an audit trail and a
+- One step further than today: `main` in this same repo also adds autonomous
+  mode — the harness acting with nobody typing — plus an audit trail and a
   session budget, because "nobody's watching" should make a harness
   *stricter*, never looser. Built and tested, not demoed today; clone it and
   check it out yourself.
-- Next layers past even that (name-drop, don't demo): durable execution
-  (checkpointed steps that survive a crash), sandboxed code execution,
-  multi-agent handoffs
+- Next layers past even that (name-drop, don't demo): sandboxed code
+  execution, multi-agent handoffs
 
 **The build-vs-buy answer, since someone will ask it if you don't say it
 first:**
@@ -467,8 +521,9 @@ hierarchy. That's the 10% you'd actually be building."
 > the actual job."
 
 **A live beat, not just a slide — do this before the Q&A slide comes up:**
-you're still sitting on Step 5's terminal — type `exit` there. As it quits,
-say the line yourself rather than reading it off the screen:
+you're still sitting on Step 6's terminal, past `npm run durable`'s "All
+steps complete." line — say this yourself rather than reading it off a
+slide:
 
 > "Same `qwen2.5:7b` as Step 1. Only the harness around it changed."
 
@@ -512,17 +567,20 @@ someone asks a question that opens the door.
 | Step 3 — Tools, No Permission (+ real-harness check) | 3.5 min | 4.5 min |
 | Step 4 — Tiered Permissions (+ real-harness check) | 5.5 min | 6.5 min |
 | Step 5 — Persistent Memory (+ real-harness check) | 5.5 min | 6.5 min |
+| Step 6 — Durable Execution (+ real-harness check) | 4 min | 5 min |
 | The Car Manufacturers | 2.5 min | 3 min |
 | Close | 1 min | 1.5 min |
-| **Total** | **26 min** | **32 min** |
+| **Total** | **30 min** | **37 min** |
 
-Dropping the old step 6 (autonomous mode) from the live script isn't just
-simpler to run — it also brings the talk comfortably inside the 30-minute
-slot instead of running over it. If you're running long anyway, cut in this
-order: The Car Manufacturers' "next layers" namedrops first; Step 2 down to
-a single sentence with no editor glance second; tighten Step 4/5's "Say"
-lines third. **Never** cut any of the five "real harness check" lines —
-those are what make this talk land as more than a car metaphor.
+Step 6's pre-step pause (`HARNESS_STEP_PAUSE_MS`, default 4000ms) is what
+makes the Ctrl-C timing forgiving — you don't need frame-perfect timing, just
+hit it sometime during the "safe to crash" spinner text before step 3's
+`[RUN]` line prints. If you're running long, cut in this order: The Car
+Manufacturers' "next layers" namedrop first; Step 2 down to a single sentence
+with no editor glance second; tighten Step 4/5's "Say" lines third. **Never**
+cut any of the six "real harness check" lines, and never cut Step 6's
+crash-and-resume beat — it's the payoff the whole "engine has no memory"
+thread has been building toward.
 
 ## Pre-talk checklist
 
@@ -535,11 +593,14 @@ those are what make this talk land as more than a car metaphor.
       same laptop — don't discover this is broken on stage
 - [ ] `npm install` run once, `npm run typecheck` passing, on **every** branch
       you'll check out live
-- [ ] `source demo/aliases.sh` rehearsed at least once, so `step1`…`step5`
+- [ ] `source demo/aliases.sh` rehearsed at least once, so `step1`…`step6`
       and `reset-demo` are muscle memory before you're on stage
-- [ ] `memory.json` deleted, `sandbox/` empty, on **every** branch before you
-      start — each step needs a genuinely fresh state (`reset-demo` handles
-      this once the aliases are loaded)
+- [ ] `memory.json`/`checkpoint.json` deleted, `sandbox/` empty, on **every**
+      branch before you start — each step needs a genuinely fresh state
+      (`reset-demo` handles this once the aliases are loaded)
+- [ ] Step 6's Ctrl-C timing rehearsed at least twice — confirm you can see
+      `[CHECKPOINT SAVED] 2/3` print, then kill it during the next pause,
+      then rerun and see both `[SKIP]` lines before step 3 actually runs
 - [ ] Say the analogy table ONCE, early, then trust it — don't re-teach the
       mapping every step, just say "the engine" / "the car" from then on
 - [ ] Say the "notice the spinner/token line" callout ONCE, in Step 1, then

@@ -5,9 +5,11 @@ frameworks, no cloud API keys — everything runs against a local model via
 [Ollama](https://ollama.com) so the demo works even on bad venue wifi.
 
 The point isn't the code. It's that four small, boring design decisions —
-mediated tools, tiered permissions, persistent memory, and a self-scheduling
-loop — are what separate "a script with an LLM in it" from something that
-survives being unplugged, lied to, and left running unattended.
+mediated tools, tiered permissions, persistent memory, and durable execution
+— are what separate "a script with an LLM in it" from something that
+survives being unplugged, told no, and crashed mid-task. (`main` also carries
+a bonus fifth decision, a self-scheduling autonomous loop, not part of the
+live talk — see below.)
 
 ## Setup (do this before the talk, not during it)
 
@@ -22,39 +24,42 @@ npm run typecheck           # sanity check
 ```
 
 **Use `qwen2.5:7b` for the live talk. This isn't a mild preference — it's
-required.** Tested head-to-head on the actual step-6 script: `llama3.2:3b`
-called `list_files` 4 times on a single-line request, then looped calling it
-7 more times on the next turn and hit the 8-step turn limit without
-finishing. That burned the entire session budget before the harness ever
-reached the scripted write — meaning the "dashboard lying" beat, the best
-moment in the whole talk, never happened at all. `qwen2.5:7b` ran the exact
-same three-line script clean, once, correctly, every time.
+required.** `llama3.2:3b` is noticeably chattier and looser about calling a
+tool exactly once per instruction — in testing it sometimes called the same
+tool repeatedly on a single request instead of stopping after one. Step 6's
+Ctrl-C timing depends on each step making exactly one predictable tool call
+inside its pause window; a model that loops or rambles first blows that
+timing. `qwen2.5:7b` runs the three-step script clean, once, correctly,
+every time.
 
 `llama3.2:3b` is kept pulled only as a last-resort emergency fallback if
 `qwen2.5:7b` is somehow unusable on the presenting machine — and if you do
-fall back, don't run the script as written; raise `MAX_STEPS` and the
-session budget first, or cut step 6 down to one line.
+fall back, raise `HARNESS_STEP_PAUSE_MS` generously so a chattier model still
+finishes each step inside the pause.
 
 ## Running it
 
 ```bash
-npm run demo    # tiered permissions + persistent memory
-npm run watch   # autonomous mode (no human typing)
+npm run demo      # tiered permissions + persistent memory (steps 1-5)
+npm run durable   # step 6: durable execution — checkpoint + crash + resume
+npm run watch     # bonus, not part of the live talk: autonomous mode
 ```
 
-For the live talk, `demo/open-act.sh {ollama|autonomy}` jumps VS Code
-straight to the relevant file+line, so the code is visible on screen next to
-the terminal instead of just narrated. Requires the `code` CLI (VS Code:
-Cmd+Shift+P → "Shell Command: Install 'code' command in PATH") — install and
-test this before the talk, not on stage.
+For the live talk, `demo/open-act.sh ollama` jumps VS Code straight to the
+relevant file+line, so the code is visible on screen next to the terminal
+instead of just narrated. Requires the `code` CLI (VS Code: Cmd+Shift+P →
+"Shell Command: Install 'code' command in PATH") — install and test this
+before the talk, not on stage.
 
-`demo` and `watch` both read/write `memory.json` and a `sandbox/` directory
-in the project root — delete `memory.json` any time to reset to a "first
-session" state for a rehearsal. `watch` also appends every policy decision
-(run/blocked/skipped/denied/budget-exceeded) to `audit.jsonl` — a reviewable
-record for exactly the case autonomy exists for: nobody watched it happen
-live. `watch` also enforces a session-wide token + action budget
-(`HARNESS_TOKEN_BUDGET`, `HARNESS_ACTION_BUDGET`, both env-overridable) so
+`demo` and `durable` both read/write `memory.json`/`checkpoint.json` and a
+`sandbox/` directory in the project root — delete those files any time to
+reset to a "first run" state for a rehearsal (`demo/aliases.sh`'s
+`reset-demo` does this in one command). `durable` runs a fixed 3-step plan
+and writes `checkpoint.json` the instant each step finishes — kill the
+process (`Ctrl-C`) during the pause before a step runs, then run it again:
+completed steps are skipped, not redone. `watch` (bonus, not demoed live)
+appends every policy decision to `audit.jsonl` and enforces a session-wide
+token + action budget (`HARNESS_TOKEN_BUDGET`, `HARNESS_ACTION_BUDGET`) so
 unattended mode can't quietly run forever.
 
 ## Project layout
@@ -65,12 +70,14 @@ harness/
   tools.ts          tool schemas + THE TIER MAP (safe / confirm / blocked)
   permissions.ts     confirm(): block until a human says yes
   memory.ts          persistent facts, a flat JSON file
+  checkpoint.ts       durable execution: which plan steps are already done
   system-prompt.ts    what the agent is told, including recalled memory
   runtime.ts          the loop: model -> tool calls -> tier gate -> repeat
   audit.ts            append-only audit.jsonl of every policy decision
 bin/
   repl.ts            interactive entrypoint (the finished harness)
-  watch.ts            autonomous entrypoint (no human typing)
+  durable.ts          step 6: checkpointed plan, survives a mid-run crash
+  watch.ts            bonus: autonomous entrypoint (no human typing)
 ```
 
 Read `harness/runtime.ts` first — it's the whole loop in one screen, and
@@ -80,13 +87,13 @@ time.
 
 ---
 
-## The 5-step build (+ a bonus 6th)
+## The 6-step build (+ a bonus 7th)
 
 This repo doubles as a self-guided tutorial. Every step below is its own git
 branch, each one a real subset of the next — `git diff` between any two
 consecutive branches shows exactly what capability was added and why. Steps
-1-5 are the live talk script; `main` is a bonus step built and tested but not
-demoed on stage (see below).
+1-5 are their own branches; step 6 lives on `main` alongside a bonus,
+undemoed autonomous-mode layer (see below).
 
 | Step | Branch | What it adds |
 |---|---|---|
@@ -95,7 +102,8 @@ demoed on stage (see below).
 | 3 | [`step-3-tools-no-permission`](../../tree/step-3-tools-no-permission) | Real file tools. Every call runs the instant it's requested — the naive agent everyone writes first. |
 | 4 | [`step-4-tiered-permissions`](../../tree/step-4-tiered-permissions) | A tier map: safe / confirm / blocked. The harness decides what's allowed, not the model. |
 | 5 | [`step-5-persistent-memory`](../../tree/step-5-persistent-memory) | A flat file on disk that survives the process exiting — quit and restart, it still remembers. |
-| 6 (bonus) | `main` (this branch) | Autonomous mode, an audit trail, and a session budget. The agent can act with nobody watching — and gets *stricter* defaults, not looser ones. Not part of the live talk; explore it yourself. |
+| 6 | `main` (this branch) | Durable execution: a fixed multi-step plan checkpoints its progress to disk after every step. Crash mid-plan, restart, and it resumes instead of starting over. |
+| 7 (bonus) | `main` (this branch) | Autonomous mode, an audit trail, and a session budget. The agent can act with nobody watching — and gets *stricter* defaults, not looser ones. Not part of the live talk; explore it yourself. |
 
 Try it yourself: `git checkout step-1-bare-model`, run `npm run demo`, work
 your way up through the branches one `git checkout` at a time. Full talk
@@ -105,8 +113,11 @@ script and speaker notes for presenting this live are in [TALK.md](TALK.md).
 
 - [ ] `ollama serve` running and reachable before doors open — don't rely on
       venue wifi for anything, this whole demo is offline-capable on purpose
-- [ ] `memory.json` and `inbox.md` deleted, `sandbox/` empty, on **every**
-      branch before you start — each step needs a genuinely fresh state
+- [ ] `memory.json`, `checkpoint.json`, and `inbox.md` deleted, `sandbox/`
+      empty, on **every** branch before you start — each step needs a
+      genuinely fresh state
+- [ ] Step 6's Ctrl-C-then-resume rehearsed at least twice — see TALK.md for
+      exact timing
 - [ ] test every branch in the sequence you'll actually present them in, on
       the machine you'll actually present from — see TALK.md for the full
       script, timing, and screen-setup notes

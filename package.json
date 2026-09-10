@@ -6,6 +6,7 @@
   "scripts": {
     "demo": "tsx bin/repl.ts",
     "watch": "tsx bin/watch.ts",
+    "durable": "tsx bin/durable.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

@@ -20,6 +20,7 @@ export const ui = {
   dim: (s: string) => styleText("gray", s),
   banner: (s: string) => styleText(["bold", "white"], s),
   wake: (s: string) => styleText(["bold", "cyan"], s),
+  checkpoint: (s: string) => styleText(["bold", "blue"], s),
 };
 
 // Flavor text for the thinking spinner below — same idea as Claude Code's
@@ -44,6 +45,16 @@ export const AUTONOMOUS_JOKES = [
   "Running solo. Full send for Barath anyway…",
   "Autonomous and still terrified of disappointing Barath…",
   "Nobody's typing. Doesn't matter. Still not blowing this for Barath…",
+];
+
+// The durable-execution demo leaves a deliberate window before each step
+// actually runs, so a live Ctrl-C has somewhere safe to land. This pool
+// leans into that pause instead of hiding it.
+export const DURABLE_JOKES = [
+  "Holding here — this is where you'd pull the plug…",
+  "Nothing's written yet. Still safe to crash…",
+  "One step at a time, checkpointed, unbothered…",
+  "If the engine dies right now, the car remembers…",
 ];
 
 const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];

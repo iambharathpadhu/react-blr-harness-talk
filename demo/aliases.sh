@@ -11,7 +11,8 @@ alias step2="git checkout step-2-the-car-shell"
 alias step3="git checkout step-3-tools-no-permission"
 alias step4="git checkout step-4-tiered-permissions"
 alias step5="git checkout step-5-persistent-memory"
+alias step6="git checkout main"
 alias step-back="git checkout main"
-alias reset-demo='rm -f memory.json inbox.md audit.jsonl; rm -f sandbox/*.txt 2>/dev/null; true'
+alias reset-demo='rm -f memory.json inbox.md audit.jsonl checkpoint.json; rm -f sandbox/*.txt 2>/dev/null; true'
 
-echo "Loaded: step1 step2 step3 step4 step5 step-back reset-demo"
+echo "Loaded: step1 step2 step3 step4 step5 step6 step-back reset-demo"
