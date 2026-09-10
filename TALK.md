@@ -50,9 +50,10 @@ One VS Code window for the whole talk — don't alt-tab between apps live.
   whatever branch you're on, `bratcode step1` … `bratcode step6` check out
   that step's branch **and** wipe `memory.json`/`checkpoint.json`/`sandbox/`
   for a fresh run, `bratcode durable` is the step-6 demo, `bratcode reset`
-  clears state without switching branches. Switching steps on stage is one
-  short word, not a long branch name typed under pressure. Run
-  `bratcode doctor` in the right terminal before doors open.
+  clears state without switching branches. **On stage, just type `gc1` …
+  `gc6`** — two-keystroke aliases for `bratcode step1` … `step6`, installed
+  by the same script. Run `bratcode doctor` in the right terminal before
+  doors open.
 - `main` *also* carries autonomous mode, an audit trail, and a session
   budget — genuinely built and tested, but not part of today's live script.
   See **Bonus material** at the bottom if there's time or someone asks.
@@ -85,26 +86,30 @@ pivot — don't solicit a second opinion:
 
 ### Why this is worth 30 minutes of your life
 
-**Say:**
+**Slide — "Harness engineering is the next big skill." Three cards, one
+sentence each, then one line at the bottom. Read the cards, don't add to
+them:**
 
-> "Here's why this matters, before we write a line of code. Getting model
-> access stopped being the hard part — anyone in this room can call an API or
-> run a model locally in five minutes. The model alone has no judgment. It
-> can't decide what's safe to do, it doesn't remember anything between calls,
-> it has no concept of 'should I actually do this, or ask first.'
->
-> Every AI tool you actually trust — Claude Code, Codex, Cursor — isn't good
-> because the model is smarter. It's good because of the engineering *around*
-> the model: what it's allowed to touch, what it remembers, what happens when
-> it fails, how much it's trusted unsupervised. If you don't understand that
-> layer, you can't debug your own AI tooling when it misbehaves, you can't
-> build an AI feature you'd actually trust in production, and you can't tell
-> a real safety design from a marketing slide when a vendor claims their
-> agent is 'safe.'
->
-> So let's build one live — five small git commits' worth, each one a real,
-> runnable step you can check out and run yourself later — so it's not just
-> a definition you forget by lunch."
+1. **The engine is a commodity.** Everyone in this room can call the same
+   model in five minutes. Nobody wins by having the engine.
+2. **Every AI tool you trust is a harness.** Claude Code, Codex, Cursor run
+   the same models you can. They're better because of the car around it:
+   what it may touch, what it remembers, what happens when it fails.
+3. **You can't drive what you don't understand.** If the harness is a black
+   box, you can't debug your tooling when it misbehaves, you can't ship an
+   AI feature you'd trust, and you can't tell real safety from a marketing
+   slide.
+
+**Bottom line on the slide:** "So today we build one. Live. Six steps."
+
+**Say (this is the whole pitch, keep it to 45 seconds):**
+
+> "The models are converging — everyone gets the same engines. What's left
+> to be good at is the harness, and that's an engineering discipline that's
+> maybe eighteen months old. The people who understand it will build the
+> tools everyone else uses. The only way I know to understand a harness is
+> to build one, so that's what we're doing for the next 25 minutes — six
+> steps, each one a real git branch you can clone and run tonight."
 
 **Then the frame:**
 
@@ -169,7 +174,7 @@ $0.00 per token.
   Say it once here, then let the audience just watch it repeat for free the
   rest of the talk.
 
-Now: `bratcode step1` in the right terminal before you start Step 1.
+Now: `gc1` in the right terminal before you start Step 1.
 
 ---
 
@@ -192,8 +197,8 @@ Now: `bratcode step1` in the right terminal before you start Step 1.
 
 ## Step 1 — Bare Model (1.5-2 min)
 
-**Screen setup:** `bratcode step1` (checks out `step-1-bare-model` and
-resets state), then `code bin/repl.ts`. This branch is two files — `bin/repl.ts` and
+**Screen setup:** `gc1` (checks out `step-1-bare-model` and resets state),
+then `code bin/repl.ts`. This branch is two files — `bin/repl.ts` and
 `harness/model.ts` — read the whole thing on screen, there's nothing hidden.
 
 **Say:**
@@ -231,7 +236,7 @@ bratcode
 
 ## Step 2 — The Car Shell (0.5-1 min, keep this fast)
 
-**Screen setup:** `bratcode step2`, then glance at `harness/runtime.ts` and
+**Screen setup:** `gc2`, then glance at `harness/runtime.ts` and
 `harness/system-prompt.ts`.
 
 **Say:**
@@ -256,7 +261,7 @@ shape." Move on quickly; this step earns its keep later, not now.
 
 ## Step 3 — Tools, No Permission (3.5-4.5 min)
 
-**Screen setup:** `bratcode step3`, then `code harness/runtime.ts` — point at the
+**Screen setup:** `gc3`, then `code harness/runtime.ts` — point at the
 loop: call the model, if it wants a tool run it immediately, feed the result
 back, repeat.
 
@@ -289,6 +294,15 @@ bratcode
 - `Ctrl-C` mid-conversation. Run the same command again. Ask "what did I
   just tell you?" — nothing. The engine has no memory of the last drive.
 
+**True story, tell it here (30 seconds, it's the best argument for step 4):**
+
+> "This isn't hypothetical. Last week I gave Codex full permissions on a
+> repo — every tool, no prompts, because prompts are annoying. It opened a
+> PR for me. Then it *merged* the PR for me. I never asked it to merge
+> anything. Nothing in the model was wrong — it did exactly what a helpful
+> engine does when the car has no brakes. That afternoon is why the next
+> step exists."
+
 **Say, landing the step:**
 
 > "That's an engine sitting on a skateboard. It moves. You would not drive it
@@ -305,7 +319,7 @@ bratcode
 
 ## Step 4 — Tiered Permissions (5.5-6.5 min)
 
-**Screen setup:** `bratcode step4`, then `code harness/tools.ts` — jump straight to
+**Screen setup:** `gc4`, then `code harness/tools.ts` — jump straight to
 the `tierOf` map. Point out it's a plain object literal, nothing clever, and
 that's the whole point.
 
@@ -351,17 +365,17 @@ bratcode
 > "This isn't a toy pattern — it's the exact shape of Claude Code's and
 > Codex's permission systems today. Reading files, running tests, listing a
 > directory — that just happens. Editing a file or running a shell command
-> asks you first, unless you've explicitly told it to auto-accept. And
-> certain things — force-pushing over main, some destructive commands — sit
-> behind a much harder gate no matter what you've pre-approved. Same three
-> tiers. You've probably clicked 'yes' or 'no' to one of these prompts this
+> asks you first, unless you've explicitly told it to auto-accept. And you
+> can put things — force-pushing over main, `rm -rf`, merging a PR — on a
+> deny list so they never run, no matter what else you've pre-approved.
+> Same three tiers. You've probably clicked 'yes' or 'no' to one of these prompts this
 > week without thinking about which tier it was."
 
 ---
 
 ## Step 5 — Persistent Memory (5.5-6.5 min)
 
-**Screen setup:** `bratcode step5`, then `code harness/memory.ts`. It's eleven lines —
+**Screen setup:** `gc5`, then `code harness/memory.ts`. It's fourteen lines —
 let that land. Point out `remember`/`recall` just read and write a JSON file
 with `fs`, no database, no cleverness.
 
@@ -403,8 +417,8 @@ bratcode
 
 ## Step 6 — Durable Execution (4-5 min)
 
-**Screen setup:** `bratcode step6` (checks out `main`), then `code bin/durable.ts` and
-`code harness/checkpoint.ts` side by side — the second file is eleven lines,
+**Screen setup:** `gc6` (checks out `main`), then `code bin/durable.ts` and
+`code harness/checkpoint.ts` side by side — the second file is thirteen lines,
 same "let it land" beat as `memory.ts` in step 5.
 
 **Say:**
