@@ -54,6 +54,18 @@ One VS Code window for the whole talk — don't alt-tab between apps live.
   `gc6`** — two-keystroke aliases for `bratcode step1` … `step6`, installed
   by the same script. Run `bratcode doctor` in the right terminal before
   doors open.
+
+  | Type | What happens |
+  |---|---|
+  | `gc1` | `step-1-bare-model`, fresh state |
+  | `gc2` | `step-2-the-car-shell`, fresh state |
+  | `gc3` | `step-3-tools-no-permission`, fresh state |
+  | `gc4` | `step-4-tiered-permissions`, fresh state |
+  | `gc5` | `step-5-persistent-memory`, fresh state |
+  | `gc6` | `main` (step 6 + bonus), fresh state |
+  | `bratcode` | run the harness on the current branch |
+  | `bratcode durable` | step 6's checkpoint / crash / resume demo |
+  | `bratcode reset` | wipe state without switching branches |
 - `main` *also* carries autonomous mode, an audit trail, and a session
   budget — genuinely built and tested, but not part of today's live script.
   See **Bonus material** at the bottom if there's time or someone asks.
@@ -563,7 +575,7 @@ someone asks a question that opens the door.
   the sandbox (`../../etc/hosts`) — show the harness throwing instead of
   leaking it. Line: "The car has a curb it physically can't drive over, no
   matter what the engine wants."
-- **Autonomous mode (`main`, `bratcode step6`):** if
+- **Autonomous mode (`main`, `gc6`):** if
   someone asks "what about when nobody's watching at all," this branch has
   the answer — `bratcode watch`, append lines to `inbox.md`, watch it act
   unsupervised with *stricter* tiers, and `cat audit.jsonl | jq` to show the
@@ -611,11 +623,11 @@ thread has been building toward.
 - [ ] `npm install` run once, `./demo/install-bratcode.sh` run once,
       `bratcode doctor` green, and `demo/check-all-branches.sh` clean on the
       laptop you'll present from
-- [ ] `bratcode step1` … `bratcode step6` rehearsed at least once, so
-      switching steps is muscle memory before you're on stage
+- [ ] `gc1` … `gc6` rehearsed at least once, so switching steps is muscle
+      memory before you're on stage
 - [ ] `memory.json`/`checkpoint.json` deleted, `sandbox/` empty, on **every**
       branch before you start — each step needs a genuinely fresh state
-      (`bratcode stepN` does this every time it switches branches)
+      (`gcN` does this every time it switches branches)
 - [ ] Step 6's Ctrl-C timing rehearsed at least twice — confirm you can see
       `[CHECKPOINT SAVED] 2/3` print, then kill it during the next pause,
       then rerun and see both `[SKIP]` lines before step 3 actually runs
