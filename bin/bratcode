@@ -6,6 +6,7 @@
 #   bratcode watch      bonus: autonomous mode (main only)
 #   bratcode reset      wipe memory.json / checkpoint.json / sandbox for a fresh run
 #   bratcode step1..6   git checkout that step's branch, then reset
+#   gc1 .. gc6          same thing, two keystrokes shorter (installed as symlinks)
 #   bratcode doctor     preflight: node_modules, Ollama up, model pulled, code CLI
 #   bratcode help
 #
@@ -82,6 +83,11 @@ doctor() {
 
 usage() { sed -n '2,13p' "$SELF" | sed 's/^# \{0,1\}//'; }
 
+# Invoked as gc1..gc6 (symlinks created by demo/install-bratcode.sh)? Treat
+# the name as the command: gc3 == bratcode step3.
+INVOKED_AS="$(basename "${BASH_SOURCE[0]}")"
+if [[ "$INVOKED_AS" =~ ^gc([1-6])$ ]]; then set -- "step${BASH_REMATCH[1]}"; fi
+
 case "${1:-}" in
   ""|repl|demo)  run_ts bin/repl.ts ;;
   durable)       run_ts bin/durable.ts ;;
@@ -94,6 +100,7 @@ case "${1:-}" in
   step4)         checkout_step step-4-tiered-permissions ;;
   step5)         checkout_step step-5-persistent-memory ;;
   step6|main)    checkout_step main ;;
+  gc1|gc2|gc3|gc4|gc5|gc6) exec "$SELF" "step${1#gc}" ;;
   help|-h|--help) usage ;;
   *) bad "unknown command: $1"; usage; exit 1 ;;
 esac
