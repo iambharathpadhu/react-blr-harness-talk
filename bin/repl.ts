@@ -10,7 +10,7 @@ import type { ChatMessage, ChatUsage } from "../harness/model.js";
 import { runTurn } from "../harness/runtime.js";
 import { recall } from "../harness/memory.js";
 import { systemPrompt } from "../harness/system-prompt.js";
-import { ui, formatTokens } from "../harness/ui.js";
+import { ui, header, formatTokens } from "../harness/ui.js";
 
 const MODEL = process.env.HARNESS_MODEL ?? "qwen2.5:7b";
 
@@ -19,7 +19,7 @@ async function main() {
   const messages: ChatMessage[] = [{ role: "system", content: systemPrompt(knownFacts) }];
   const session: ChatUsage = { promptTokens: 0, completionTokens: 0 };
 
-  console.log(ui.banner(`harness-demo · step 5 · persistent memory · ${MODEL}`));
+  console.log(header("step 5 · persistent memory", MODEL));
   console.log(
     ui.dim(
       knownFacts.length

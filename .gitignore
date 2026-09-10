@@ -1,6 +1,8 @@
 node_modules/
 dist/
 memory.json
+checkpoint.json
+audit.jsonl
 sandbox/*
 !sandbox/.gitkeep
 inbox.md
