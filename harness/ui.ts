@@ -19,7 +19,7 @@ export const ui = {
   skipped: (s: string) => styleText("yellow", s),
   dim: (s: string) => styleText("gray", s),
   accent: (s: string) => styleText(["bold", "yellowBright"], s),
-  banner: (s: string) => styleText(["bold", "white"], s),
+  banner: (s: string) => styleText("bold", s), // no explicit color: inherits the terminal's default so it reads on light and dark themes
   wake: (s: string) => styleText(["bold", "cyan"], s),
   checkpoint: (s: string) => styleText(["bold", "blue"], s),
 };
