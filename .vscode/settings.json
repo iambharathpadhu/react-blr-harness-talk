@@ -1,0 +1,14 @@
+{
+  // Use the TypeScript that ships in node_modules, not whatever VS Code bundles.
+  // A fresh clone shows red squiggles until `npm install` has run — that's
+  // @types/node and tsx missing, not a bug in the code. Run `bratcode doctor`.
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.importModuleSpecifierEnding": "js",
+  "files.exclude": {
+    "**/node_modules": true,
+    "dist": true
+  },
+  "editor.rulers": [100],
+  "terminal.integrated.scrollback": 5000
+}
