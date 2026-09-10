@@ -11,7 +11,7 @@ import { stdin, stdout } from "node:process";
 import type { ChatMessage, ChatUsage } from "../harness/model.js";
 import { runTurn } from "../harness/runtime.js";
 import { systemPrompt } from "../harness/system-prompt.js";
-import { ui, formatTokens } from "../harness/ui.js";
+import { ui, header, formatTokens } from "../harness/ui.js";
 
 const MODEL = process.env.HARNESS_MODEL ?? "qwen2.5:7b";
 
@@ -19,7 +19,7 @@ async function main() {
   const messages: ChatMessage[] = [{ role: "system", content: systemPrompt() }];
   const session: ChatUsage = { promptTokens: 0, completionTokens: 0 };
 
-  console.log(ui.banner(`harness-demo · step 2 · the car shell · ${MODEL}`));
+  console.log(header("step 2 · the car shell", MODEL));
   console.log(ui.dim("type 'exit' to quit") + "\n");
 
   const rl = readline.createInterface({ input: stdin, output: stdout });
