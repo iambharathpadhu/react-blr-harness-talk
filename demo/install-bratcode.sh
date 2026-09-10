@@ -8,8 +8,9 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 for dir in /opt/homebrew/bin /usr/local/bin "$HOME/.local/bin"; do
   if [ -d "$dir" ] && [ -w "$dir" ] && [[ ":$PATH:" == *":$dir:"* ]]; then
     ln -sfn "$ROOT/bin/bratcode" "$dir/bratcode"
-    echo "linked $dir/bratcode -> $ROOT/bin/bratcode"
-    echo "try: bratcode doctor"
+    for n in 1 2 3 4 5 6; do ln -sfn "$ROOT/bin/bratcode" "$dir/gc$n"; done
+    echo "linked $dir/bratcode (+ gc1..gc6) -> $ROOT/bin/bratcode"
+    echo "try: bratcode doctor      then: gc1  (= bratcode step1)"
     exit 0
   fi
 done
