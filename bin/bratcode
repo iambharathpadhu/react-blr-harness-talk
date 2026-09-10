@@ -6,9 +6,13 @@
 #   bratcode watch      bonus: autonomous mode (main only)
 #   bratcode reset      wipe memory.json / checkpoint.json / sandbox for a fresh run
 #   bratcode step1..6   git checkout that step's branch, then reset
-#   gc1 .. gc6          same thing, two keystrokes shorter (installed as symlinks)
 #   bratcode doctor     preflight: node_modules, Ollama up, model pulled, code CLI
 #   bratcode help
+#
+# On stage — the gc shortcuts (installed next to bratcode, same as stepN + reset):
+#   gc1   step-1-bare-model            gc4   step-4-tiered-permissions
+#   gc2   step-2-the-car-shell         gc5   step-5-persistent-memory
+#   gc3   step-3-tools-no-permission   gc6   main (step 6 + bonus)
 #
 # Install once with demo/install-bratcode.sh — it symlinks this file onto
 # your PATH, so `git checkout` between step branches never breaks it as long
@@ -81,7 +85,7 @@ doctor() {
   [ $fail -eq 0 ] && bold "ready." || { bold "not ready — fix the ✘ lines above."; exit 1; }
 }
 
-usage() { sed -n '2,13p' "$SELF" | sed 's/^# \{0,1\}//'; }
+usage() { awk 'NR>1 && /^# Install once/{exit} NR>1{sub(/^# ?/,""); print}' "$SELF"; }
 
 # Invoked as gc1..gc6 (symlinks created by demo/install-bratcode.sh)? Treat
 # the name as the command: gc3 == bratcode step3.
