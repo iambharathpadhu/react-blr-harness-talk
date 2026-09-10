@@ -6,7 +6,13 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    // Resolve Node's types explicitly, relative to THIS file. VS Code's TS server
+    // otherwise relies on automatic @types discovery, which it can lose after a
+    // git checkout or in a multi-root workspace — producing "Cannot find name
+    // 'process'" / "node:fs" squiggles even though `tsc` is clean.
+    "types": ["node"],
+    "typeRoots": ["./node_modules/@types"]
   },
   "include": ["harness/**/*.ts", "bin/**/*.ts"]
 }
