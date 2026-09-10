@@ -52,8 +52,13 @@ bratcode durable    # step 6: durable execution — checkpoint + crash + resume
 bratcode watch      # bonus, not part of the live talk: autonomous mode
 bratcode reset      # wipe memory.json / checkpoint.json / sandbox for a fresh run
 bratcode step1      # git checkout step-1-bare-model, then reset (…step2 … step6)
+gc1 … gc6           # the same thing, two keystrokes: gc3 == bratcode step3
 bratcode doctor     # preflight check — run it before you walk on stage
 ```
+
+On stage, use the `gc` shortcuts: `gc1` switches to step 1 with a fresh
+state, `gc2` to step 2, and so on up to `gc6` for `main`. They're installed
+alongside `bratcode` by `demo/install-bratcode.sh`.
 
 `npm run demo` / `npm run durable` / `npm run watch` still work if you'd
 rather not install anything.
@@ -123,8 +128,8 @@ undemoed autonomous-mode layer (see below).
 | 6 | `main` (this branch) | Durable execution: a fixed multi-step plan checkpoints its progress to disk after every step. Crash mid-plan, restart, and it resumes instead of starting over. |
 | 7 (bonus) | `main` (this branch) | Autonomous mode, an audit trail, and a session budget. The agent can act with nobody watching — and gets *stricter* defaults, not looser ones. Not part of the live talk; explore it yourself. |
 
-Try it yourself: `bratcode step1`, then `bratcode`, and work your way up
-through the branches one `bratcode stepN` at a time. Full talk
+Try it yourself: `gc1`, then `bratcode`, and work your way up through the
+branches one `gcN` at a time. Full talk
 script and speaker notes for presenting this live are in [TALK.md](TALK.md).
 
 ## Rehearsal checklist
@@ -135,7 +140,7 @@ script and speaker notes for presenting this live are in [TALK.md](TALK.md).
       `demo/check-all-branches.sh` clean
 - [ ] `memory.json`, `checkpoint.json`, and `inbox.md` deleted, `sandbox/`
       empty, on **every** branch before you start — each step needs a
-      genuinely fresh state (`bratcode stepN` does this for you)
+      genuinely fresh state (`gcN` / `bratcode stepN` does this for you)
 - [ ] Step 6's Ctrl-C-then-resume rehearsed at least twice — see TALK.md for
       exact timing
 - [ ] test every branch in the sequence you'll actually present them in, on
