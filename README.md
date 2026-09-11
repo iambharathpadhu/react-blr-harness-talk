@@ -2,7 +2,7 @@
 
 > **You're on `step-1-bare-model`** — the very first step of a 6-step build.
 > Just the model, no tools, no loop, no memory. See the full progression
-> table on [`main`](https://github.com/iambharathpadhu/react-blr-harness-talk#the-6-step-build)
+> table on [`main`](https://github.com/iambharathpadhu/bratcode#the-6-step-build)
 > or jump straight to what comes next: `bratcode step2`.
 
 A from-scratch, ~250-line agent harness built for a live conference talk. No
