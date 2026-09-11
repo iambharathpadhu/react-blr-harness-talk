@@ -2,7 +2,7 @@
 
 > **You're on `step-4-tiered-permissions`** — step 4 of a 6-step build.
 > A tier map: safe / confirm / blocked. The harness decides what's allowed, not the model. See the full progression
-> table on [`main`](https://github.com/iambharathpadhu/react-blr-harness-talk#the-6-step-build)
+> table on [`main`](https://github.com/iambharathpadhu/bratcode#the-6-step-build)
 > or jump straight to what comes next: `bratcode step5`.
 
 A from-scratch, ~250-line agent harness built for a live conference talk. No
