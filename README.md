@@ -2,7 +2,7 @@
 
 > **You're on `step-2-the-car-shell`** — step 2 of a 6-step build.
 > A system prompt and a conversation loop, formalized as their own modules. Still zero tools. See the full progression
-> table on [`main`](https://github.com/iambharathpadhu/react-blr-harness-talk#the-6-step-build)
+> table on [`main`](https://github.com/iambharathpadhu/bratcode#the-6-step-build)
 > or jump straight to what comes next: `bratcode step3`.
 
 A from-scratch, ~250-line agent harness built for a live conference talk. No

@@ -2,58 +2,55 @@
 
 _Designing a Personal AI Harness — ReactJS Bangalore, React Meetup #108_
 
-Alt/shorter title if you need it to fit a smaller slide: **"Your LLM Is Just the
-Engine."** Use the long one on the title slide, the short one as a running
-footer/tagline on every section card.
+Short title if a slide needs it: **"Your LLM Is Just the Engine."** Long one
+on the title slide, short one as the running footer.
+
+Voice for the whole night: **punchy, a little cocky, never mean.** Short
+sentences. Second person. Let the demos do the bragging.
 
 ---
 
-## The analogy — lock this in first, everything else hangs off it
+## The analogy — lock it in once, then trust it
 
 | Car | Harness |
 |---|---|
-| **Engine** | The model (the LLM itself — raw power, no judgment) |
-| **The whole car** | The harness (chassis, dashboard, everything around the engine) |
+| **Engine** | The model. Raw power, zero judgment. |
+| **The whole car** | The harness. Chassis, dashboard, everything around the engine. |
 | **What the car can DO** — steer, brake, wipers, horn | **Tools** — `read_file`, `write_file`, `delete_file`, `remember_fact` |
 | **Seatbelt / child-lock / speed limiter** | **Tool tiers** — safe / confirm / blocked |
 | **Trip computer / odometer** — survives the engine turning off | **Memory** — `memory.json`, survives the process dying |
-| **The dashboard itself** — gauges, warning lights | **The telemetry line** — model name, live spinner, token count |
+| **The dashboard** — gauges, warning lights | **The telemetry line** — model name, live spinner, token count |
 | **Car manufacturers (Toyota, Honda)** | **LangGraph, Mastra, agent SDKs** — factory-built cars |
 
-Say this pairing ONE time, early, cleanly — then just say "the engine" and "the
-car" for the rest of the talk. Don't re-explain the mapping every time; trust
-the audience to carry it once it's set.
+Say the pairing ONCE, early, cleanly. After that it's just "the engine" and
+"the car." Don't re-teach it. Trust the room.
 
 ---
 
 ## Screen setup
 
-One VS Code window for the whole talk — don't alt-tab between apps live.
+One VS Code window all night. No alt-tabbing live.
 
-- **Top pane:** VS Code editor, showing whichever file the current step is
-  about (see each step's "Screen setup" line below).
-- **Bottom pane:** VS Code's own integrated terminal, split into two:
-  - **Left terminal:** where you actually run `bratcode` and type into
-    the conversation.
-  - **Right terminal:** stays on the project root, idle, for `git checkout`
-    and `ollama ps`, so the left terminal's conversation log never gets
-    cluttered.
-- Before the talk, run **Cmd+Shift+P → "Shell Command: Install 'code' command
-  in PATH"** once. Test it now, not on stage.
-- This repo is **five git branches** for steps 1-5 — `step-1-bare-model`
-  through `step-5-persistent-memory` — plus **`main`**, which carries step 6
-  (durable execution) on top of everything from step 5. Moving between steps
-  live is a **`git checkout <branch>`**, not a flag or a file edit — that's
-  the whole point of building it this way.
+- **Top pane:** VS Code editor on whichever file the current step is about
+  (each step below says which).
+- **Bottom pane:** VS Code's integrated terminal, split in two:
+  - **Left terminal:** where `bratcode` runs and you type into the
+    conversation.
+  - **Right terminal:** project root, idle, for `gcN` and `ollama ps`, so the
+    left terminal's conversation log stays clean.
+- Before the talk: **Cmd+Shift+P → "Shell Command: Install 'code' command in
+  PATH"**, once. Test it now, not on stage.
+- The repo is **five step branches** — `step-1-bare-model` through
+  `step-5-persistent-memory` — plus **`main`**, which is step 6 (durable
+  execution) on top of step 5. Moving between steps live is a **`git
+  checkout`**, not a flag. That's the whole point of building it this way.
 - **Before the talk (once, not on stage), run `./demo/install-bratcode.sh`.**
-  From then on the whole talk is one command: `bratcode` runs the harness on
-  whatever branch you're on, `bratcode step1` … `bratcode step6` check out
-  that step's branch **and** wipe `memory.json`/`checkpoint.json`/`sandbox/`
-  for a fresh run, `bratcode durable` is the step-6 demo, `bratcode reset`
-  clears state without switching branches. **On stage, just type `gc1` …
-  `gc6`** — two-keystroke aliases for `bratcode step1` … `step6`, installed
-  by the same script. Run `bratcode doctor` in the right terminal before
-  doors open.
+  From then on the whole talk is one command. `bratcode` runs the harness on
+  whatever branch you're on. `bratcode step1` … `step6` check out that branch
+  **and** wipe `memory.json`/`checkpoint.json`/`sandbox/`. `bratcode durable`
+  is the step-6 demo. `bratcode reset` clears state without switching. **On
+  stage, type `gc1` … `gc6`** — two-keystroke aliases installed by the same
+  script. Run `bratcode doctor` in the right terminal before doors open.
 
   | Type | What happens |
   |---|---|
@@ -67,226 +64,226 @@ One VS Code window for the whole talk — don't alt-tab between apps live.
   | `bratcode durable` | step 6's checkpoint / crash / resume demo |
   | `bratcode reset` | wipe state without switching branches |
 - `main` *also* carries autonomous mode, an audit trail, and a session
-  budget — genuinely built and tested, but not part of today's live script.
-  See **Bonus material** at the bottom if there's time or someone asks.
+  budget. Built, tested, not in tonight's script. See **Bonus material**.
 
 ---
 
-## Title slide
+## Slide 1 — Title
 
 **The Model Is the Engine. You Still Have to Build the Car.**
-_Designing a Personal AI Harness_
-Barath · ReactJS Bangalore · React Meetup #108
+_A personal AI harness, built live, from nothing, in six git branches. No
+frameworks. No API key. No excuses._
+
+Say the long title once. Then straight to slide 2.
 
 ---
 
-## Cold open (3.5-4 min)
+## Slide 2 — Who's talking (10 seconds, not 60)
 
-### Ask the room first — don't just tell them (cap this at 30 seconds, one exchange, then move — don't let it become a discussion)
+Photo, name, "Senior Software Engineer @ Chaine", three facts, handles.
 
-**Say, and actually wait for a response:**
+**Say, fast, not reading:**
 
-> "Quick show of hands before I say anything else — who's confident they
-> could define what an 'AI harness' is, beyond 'the thing that wraps the
-> model'?"
+> "Barath. Senior engineer at Chaine. Coimbatore boy. Messi fan first,
+> engineer second. Five years of breaking things in tech and occasionally
+> learning from it. Tonight I broke an AI agent on purpose so you don't
+> have to."
 
-Take ONE response (a raised hand you call on, or silence) and immediately
-pivot — don't solicit a second opinion:
+Move. Nobody came for the bio.
 
-> "That's normal — it's one of those terms everyone's absorbed by osmosis
-> without anyone actually defining it."
+---
+
+## Cold open (3.5–4 min)
+
+### Ask the room first (cap at 30 seconds, ONE exchange, then move)
+
+**Say, and actually wait:**
+
+> "Quick show of hands. Who's confident they could define 'AI harness'
+> beyond 'the thing that wraps the model'?"
+
+Take ONE response and pivot immediately:
+
+> "That's normal. It's one of those terms everyone absorbed by osmosis and
+> nobody defined."
 
 ### Why this is worth 30 minutes of your life
 
-**Slide — "Harness engineering is the next big skill." Three cards, one
-sentence each, then one line at the bottom. Read the cards, don't add to
-them:**
+**Slide — "Harness engineering is the next big skill. Nobody taught you it."
+Three cards. Read them, don't add to them:**
 
 1. **The engine is a commodity.** Everyone in this room can call the same
    model in five minutes. Nobody wins by having the engine.
 2. **Every AI tool you trust is a harness.** Claude Code, Codex, Cursor run
-   the same models you can. They're better because of the car around it:
-   what it may touch, what it remembers, what happens when it fails.
-3. **You can't drive what you don't understand.** If the harness is a black
-   box, you can't debug your tooling when it misbehaves, you can't ship an
-   AI feature you'd trust, and you can't tell real safety from a marketing
-   slide.
+   models you can rent too. They win on the car: what it may touch, what it
+   remembers, what happens when it fails.
+3. **You can't drive what you don't understand.** Black-box harness means
+   you can't debug it, can't ship it, can't tell real safety from a
+   marketing slide.
 
-**Bottom line on the slide:** "So today we build one. Live. Six steps."
+**Bottom line on the slide:** "So we build one. Live. Six steps, six git
+branches. Clone it tonight, break it tomorrow."
 
-**Say (this is the whole pitch, keep it to 45 seconds):**
+**Say (the whole pitch, 45 seconds):**
 
-> "The models are converging — everyone gets the same engines. What's left
-> to be good at is the harness, and that's an engineering discipline that's
-> maybe eighteen months old. The people who understand it will build the
-> tools everyone else uses. The only way I know to understand a harness is
-> to build one, so that's what we're doing for the next 25 minutes — six
-> steps, each one a real git branch you can clone and run tonight."
+> "The models are converging. Everyone gets the same engines. What's left to
+> be good at is the harness, and that discipline is maybe eighteen months
+> old. The people who get it will build the tools everyone else uses. The
+> only way I know to understand a harness is to build one. So that's the
+> next 25 minutes. Six steps, each one a real git branch you can clone
+> tonight."
 
 **Then the frame:**
 
-> "Everyone in this room has done this: you get API access to an LLM, you give
-> it a couple of tools, you wire up a loop. It works. It feels like magic.
-> Here's the thing nobody tells you in that moment — **you just built an
-> engine. You didn't build a car.**"
+> "Everyone here has done this: you get API access to an LLM, hand it a
+> couple of tools, wire up a loop. It works. It feels like magic. Here's the
+> thing nobody tells you in that moment: **you built an engine. You did not
+> build a car.**"
 
-Land the analogy table (one slide, just the first three rows — engine, car,
-tools). Then say the line that frames the whole talk:
+Land the analogy table (one slide). Then the line that frames the talk:
 
 > "An engine has no brakes. No seatbelt. No steering wheel. It has one
-> property: it's powerful. Everything that makes a car *safe to put on a
-> road* — everything — is stuff you build **around** the engine, not inside
-> it. That's the harness. That's the talk. We're going to build it in five
-> steps, live, each one a real git branch — so at the end you don't just have
-> a definition, you have a tutorial you can clone."
+> property: it's powerful. Everything that makes a car safe on a road is
+> stuff you build **around** the engine, not inside it. That's the harness.
+> That's the talk."
 
-**Slide:** the analogy table, engine/car/tools rows only.
+**Slide:** the analogy table.
 
-### The engine we're using: Ollama + qwen2.5:7b, on this laptop (1 min, right after the analogy)
+### Slide — bratcode (15 seconds)
 
-**Slide:** "The Engine" — the engine-block illustration on the left; on the
-right, the two facts: **Ollama** is the engine bay (a local model server on
-`localhost:11434`), **qwen2.5:7b** is the engine itself (a 7-billion-parameter
-open model, ~4.7 GB, running on this laptop's GPU). No API key, no cloud,
-$0.00 per token.
+> "Everything tonight runs on this. `bratcode`. Brat, short for Barath. Not
+> deep. One command, six git branches, one capability per branch. About 250
+> lines of TypeScript and a local model. You could write it this weekend.
+> That's the point."
 
-**Screen setup:** stay on `main` for this one beat, before checking out
-`step-1-bare-model` — `demo/open-act.sh ollama` shows `harness/model.ts`.
+### The engine: Ollama + qwen2.5:7b, on this laptop (1 min)
+
+**Slide:** "The engine tonight: qwen2.5:7b, inside Ollama, on this laptop.
+Not the cloud." Engine art on the left; on the right: **Ollama** is the
+engine bay (a local model server on `localhost:11434`), **qwen2.5:7b** is
+the engine (7B-parameter open model, ~4.7 GB), **$0.00 / token**.
+
+**Screen setup:** stay on `main` for this beat, before `gc1`.
+`demo/open-act.sh ollama` shows `harness/model.ts`.
 
 **Say:**
 
-> "Let's name the engine before we start it. Today the engine is
-> **qwen2.5:7b** — a seven-billion-parameter open model — running inside
-> **Ollama** on this laptop. Not Claude, not GPT, nothing in the cloud.
-> That's deliberate: the point of the talk is that the harness is what
-> matters, so I want the engine to be the most ordinary, replaceable part
-> on stage. Everything today runs on my laptop. No API key, nothing leaves
-> this machine."
+> "Let's name the engine before we start it. qwen2.5:7b, seven billion
+> parameters, inside Ollama on this laptop. Not Claude, not GPT, nothing in
+> the cloud. That's deliberate. I want the engine to be the most boring,
+> replaceable part on stage. The car is the talk. Nothing leaves this
+> machine."
 
-- Point at `model.ts` on screen: `OLLAMA_URL` defaults to `localhost:11434`,
-  and `HARNESS_MODEL` defaults to **`qwen2.5:7b`** — that's the model
-  running for the entire talk, chosen because it calls tools once and
-  answers cleanly (see README.md — `llama3.2:3b` is kept pulled only as an
-  emergency fallback; it's noticeably chattier and unreliable if actually
-  used live). There's no `API_KEY` anywhere in this codebase — grep for it
-  if anyone doesn't believe you.
-- In the right terminal: `ollama list` — show the two models already pulled,
-  but say out loud which one is actually running today.
-- `ollama ps` — run it right after the first demo request lands, not before
-  (it's empty until something's actually using the model). Shows the model
-  loaded into memory, how much RAM/GPU it's using, right there on your own
-  hardware.
-- **Optional, high-impact if you're confident:** turn on Airplane Mode before
-  Step 1 and leave it on for the whole talk. If a live demo can survive with
-  zero network, that's a stronger proof than any slide.
-- Once the telemetry line appears in Step 1, point at it once: it prints
-  `$0.00 · running locally` next to the token count, every single turn.
-  That's not decoration — it's the same "economics" line item a company
-  weighs when deciding whether to build its own harness versus renting one.
-  Say it once here, then let the audience just watch it repeat for free the
-  rest of the talk.
+- Point at `model.ts`: `OLLAMA_URL` defaults to `localhost:11434`,
+  `HARNESS_MODEL` defaults to **`qwen2.5:7b`**. That's the engine all night,
+  chosen because it calls tools once and answers cleanly. (`llama3.2:3b` is
+  pulled only as an emergency fallback. It's chattier and loops on tool
+  calls. Don't use it live. See README.) There is no `API_KEY` anywhere in
+  this codebase. grep it if anyone doubts you.
+- Right terminal: `ollama list`. Two models pulled, say out loud which one is
+  running.
+- `ollama ps` right after the first demo request lands, not before. Shows the
+  model loaded, RAM/GPU, on your own hardware.
+- **Optional flex:** Airplane Mode on before Step 1, leave it on all night.
+  A live demo surviving zero network beats any slide.
+- When the telemetry line first appears in Step 1, point at it once: `$0.00 ·
+  running locally`, every turn. That's the economics line a company weighs
+  when deciding whether to build a harness or rent one. Say it once. Let it
+  repeat for free.
 
-Now: `gc1` in the right terminal before you start Step 1.
+Now: `gc1` in the right terminal before Step 1.
 
 ---
 
-## Naming the failure modes (1.5-2 min)
+## Naming the failure modes (1.5–2 min)
 
 **Say:**
 
-> "So what does 'engine, no car' actually look like when you run it? Four
-> things, and I'm going to make all four concrete over the next six steps,
-> not just describe them."
+> "So what does engine-no-car look like when you run it? Four things. I'm
+> going to make all four happen live, not describe them."
 
-**Slide — four bullets, one line each:**
-- Floors the accelerator the instant it's asked — no brakes, no seatbelt
-- Doesn't know the difference between "can" and "should" — every action gets
-  equal trust
-- Forgets everything the second the engine turns off — no trip computer
-- A crash mid-task means starting over from zero — no memory of how far it got
+**Slide — four cards, one line each:**
+- **No brakes, no seatbelt.** Floors it the instant it's asked. Every tool
+  call runs immediately. Every. Single. One.
+- **No "can" vs "should".** Reading a file and deleting one look identical to
+  it. Equal trust for everything.
+- **No trip computer.** Forgets everything the second the engine turns off.
+- **No crash recovery.** Stalls mid-task? Tow it home. Start the whole trip
+  over.
 
 ---
 
-## Step 1 — Bare Model (1.5-2 min)
+## Step 1 — Bare Model (1.5–2 min)
 
-**Screen setup:** `gc1` (checks out `step-1-bare-model` and resets state),
-then `code bin/repl.ts`. This branch is two files — `bin/repl.ts` and
-`harness/model.ts` — read the whole thing on screen, there's nothing hidden.
+**Screen setup:** `gc1`, then `code bin/repl.ts`. Two files: `bin/repl.ts`
+and `harness/model.ts`. Read the whole thing on screen. Nothing hidden.
 
 **Say:**
 
-> "Step one, the actual engine: send the conversation, get a reply back.
-> That's the entire capability."
+> "Step one, the actual engine: send the conversation, get a reply. That's
+> the entire capability. Impressive and useless."
 
 **Live demo:**
 ```bash
 bratcode
 ```
-- Ask it to read a file, or remember something. It can't — there is
-  genuinely no mechanism here for it to affect anything outside generating
-  text.
-- Point at the terminal while it's thinking: this spinner — a live tick with
-  elapsed seconds, and a token count once the reply lands — is the same
-  telemetry Claude Code's own CLI shows you while it works. Say it once here,
-  then let it just be ambient for the rest of the talk: "notice this is
-  ticking, not just sitting there — and it's telling you the truth about how
-  many tokens that reply actually cost." Don't re-explain it every step.
+- Ask it to read a file, or remember something. It can't. There is
+  genuinely no mechanism for it to affect anything but text.
+- Point at the spinner while it thinks, once: "notice it's ticking, not
+  sitting there. And it's telling you the truth about what that reply cost."
+  Then never explain it again.
 
-**Say, landing the step:**
+**Land it:**
 
-> "That's the whole engine. No steering wheel yet. Watch it grow one part at
-> a time."
+> "That's the whole engine. No steering wheel. Watch it grow one part at a
+> time."
 
 **Real harness check:**
 
-> "This is literally what you get if you call the Claude API directly —
-> a raw completion, no system prompt, no tools, no loop. Every agentic coding
-> tool you've ever used — Claude Code, Cursor, Codex — starts here before a
-> single line of harness code exists on top of it."
+> "A raw Claude API call is exactly this. A completion, no system prompt, no
+> tools, no loop. Claude Code, Cursor, Codex all start from here before a
+> single line of harness exists."
 
 ---
 
-## Step 2 — The Car Shell (0.5-1 min, keep this fast)
+## Step 2 — The Car Shell (0.5–1 min, keep it fast)
 
-**Screen setup:** `gc2`, then glance at `harness/runtime.ts` and
+**Screen setup:** `gc2`, glance at `harness/runtime.ts` and
 `harness/system-prompt.ts`.
 
 **Say:**
 
-> "Before we bolt anything new on, one housekeeping step: the system prompt
-> and the loop each get their own file. Nothing observable changes — same
-> demo, same output — but every capability from here forward slots into
-> `runTurn()` without this file needing to change. That's on purpose."
+> "Housekeeping step. The system prompt and the loop get their own files.
+> Nothing changes on screen, on purpose. But every capability from here on
+> slots into `runTurn()` without this file changing again."
 
-No live demo needed here — a diff glance is enough: "same behavior, new
-shape." Move on quickly; this step earns its keep later, not now.
+No live demo. A diff glance is enough: "same behaviour, new shape." Move.
 
 **Real harness check:**
 
-> "This is the skeleton every agent harness needs before a single tool
-> exists. Claude Code has its own large system prompt and its own core
-> control loop — call the model, look for a tool call, act, repeat. Same
-> shape as this file. The only difference is how many capabilities are
-> plugged into it, which is exactly what we build next."
+> "Claude Code is a big system prompt plus one control loop: call the model,
+> look for a tool call, act, repeat. Same shape as this file. Fewer zeros in
+> the line count."
 
 ---
 
-## Step 3 — Tools, No Permission (3.5-4.5 min)
+## Step 3 — Tools, No Permission (3.5–4.5 min)
 
-**Screen setup:** `gc3`, then `code harness/runtime.ts` — point at the
-loop: call the model, if it wants a tool run it immediately, feed the result
-back, repeat.
+**Screen setup:** `gc3`, then `code harness/runtime.ts`. Point at the loop:
+call the model, if it wants a tool run it immediately, feed the result back,
+repeat.
 
 **Say:**
 
-> "Now the car actually has pedals. Real file tools — read, write, delete —
-> and every one of them runs the instant it's asked. This is the naive agent
-> everyone writes first. It works. Watch what 'works' actually means."
+> "Now the car has pedals. Real file tools. Read, write, delete. Every one
+> runs the instant it's asked. This is the agent everyone writes first. It
+> works. Watch what 'works' means."
 
-**Slide — the naive loop, minimal code, big font:**
+**Slide — "Every tool. Zero questions. What could go wrong."** The naive
+loop, big font:
 ```
 call the model
-if it wants a tool -> run the tool, no questions asked
+if it wants a tool -> run it, no questions asked
 feed the result back
 repeat
 ```
@@ -295,292 +292,264 @@ repeat
 ```bash
 bratcode
 ```
-- Ask it to write a file, then delete it. Watch it just... do both. No
-  pause, no confirmation. Point at the new `→` preview line under each
-  `[RUN]` — the harness is now showing you what the tool actually returned,
-  not just that it was called. Notice the write result says
-  `(verified on disk)` — the harness re-read the file after writing it,
-  rather than trusting `fs.writeFileSync` not throwing as proof the content
-  is actually there. Say once, briefly: "a tool call succeeding and the
-  outcome being true are two different claims — this harness checks both."
-- `Ctrl-C` mid-conversation. Run the same command again. Ask "what did I
-  just tell you?" — nothing. The engine has no memory of the last drive.
+- Ask it to write a file, then delete it. Watch it just… do both. No pause,
+  no confirmation. Point at the `→` preview line under each `[RUN]`: the
+  harness shows what the tool returned, not just that it was called. The
+  write says `(verified on disk)`: the harness re-read the file instead of
+  trusting `writeFileSync` not throwing. Say once: "a tool call succeeding
+  and the outcome being true are two different claims. This harness checks
+  both."
+- `Ctrl-C` mid-conversation. Run it again. Ask "what did I just tell you?"
+  Nothing. The engine has no memory of the last drive.
 
-**True story, tell it here (30 seconds, it's the best argument for step 4):**
+**True story, tell it here (30 seconds, best argument for step 4):**
 
 > "This isn't hypothetical. Last week I gave Codex full permissions on a
-> repo — every tool, no prompts, because prompts are annoying. It opened a
-> PR for me. Then it *merged* the PR for me. I never asked it to merge
-> anything. Nothing in the model was wrong — it did exactly what a helpful
-> engine does when the car has no brakes. That afternoon is why the next
-> step exists."
+> repo. Every tool, no prompts, because prompts are annoying. It opened a PR
+> for me. Then it *merged* the PR for me. I never asked it to merge anything.
+> Nothing in the model was wrong. It did exactly what a helpful engine does
+> when the car has no brakes. That afternoon is why the next step exists."
 
-**Say, landing the step:**
+**Land it:**
 
-> "That's an engine sitting on a skateboard. It moves. You would not drive it
-> down MG Road, and you definitely wouldn't let it drive *itself*."
+> "That's an engine on a skateboard. It moves. You would not drive it down
+> MG Road. You definitely wouldn't let it drive itself."
 
 **Real harness check:**
 
-> "If this looks familiar, it should — this is exactly the failure mode that
-> made Claude Code, Codex, and every other coding agent necessary in the
-> first place. Nobody ships the raw skateboard. The next two steps are
-> literally the two things those tools had to build on top of it."
+> "If this looks familiar, it should. This is the exact failure that made
+> Claude Code, Codex, and every coding agent necessary. Nobody ships the raw
+> skateboard. The next two steps are the two things those tools had to build
+> on top of it."
 
 ---
 
-## Step 4 — Tiered Permissions (5.5-6.5 min)
+## Step 4 — Tiered Permissions (5.5–6.5 min)
 
-**Screen setup:** `gc4`, then `code harness/tools.ts` — jump straight to
-the `tierOf` map. Point out it's a plain object literal, nothing clever, and
-that's the whole point.
+**Screen setup:** `gc4`, then `code harness/tools.ts`, straight to the
+`tierOf` map. A plain object literal. Nothing clever. That's the point.
 
 **Say:**
 
-> "First real safety system: **the car decides what the engine is allowed to
-> do.** Flooring the accelerator doesn't always mean the wheels spin — ABS,
-> traction control, a child-lock on the door — the engine wants one thing,
-> the car's systems decide what actually happens."
+> "First real safety system: **the car gets a seatbelt, and the engine
+> doesn't get a vote.** Flooring the accelerator doesn't always mean the
+> wheels spin. ABS, traction control, a child-lock. The engine wants one
+> thing. The car's systems decide what actually happens."
 
-**Slide — the tier map, styled like a dashboard:**
-| Tool (what the engine wants to do) | Tier (what the car allows) |
+**Slide — the tier map:**
+| Tool (what the engine wants) | Tier (what the car allows) |
 |---|---|
 | `list_files`, `read_file`, `recall_memory` | **safe** — just happens |
 | `write_file` | **confirm** — ask the driver first |
-| `delete_file` | **blocked** — the car refuses, full stop |
+| `delete_file` | **blocked** — the car refuses. Full stop. Not even asked. |
 
-Point out the new `[POLICY]` line that now prints before every single tool
-call, safe ones included — it's the harness saying its decision out loud,
-not just acting on it silently. That one word (`safe` / `confirm` /
-`blocked`) is the entire tier map, made visible in the terminal instead of
-only living in a source file.
+Point out the new `[POLICY]` line before every tool call, safe ones
+included. The harness saying its decision out loud. That one word is the
+whole tier map, visible in the terminal instead of buried in a source file.
 
 **The line to land, verbatim:**
 
 > "The model does not get a vote on this. It will happily *ask* for anything
-> it thinks helps — that's what engines do, they want to go. Whether that ask
-> becomes a real action is a policy decision the car makes, not a capability
-> question about the engine."
+> it thinks helps. That's what engines do. They want to go. Whether that ask
+> becomes an action is a policy the car makes, not a capability the engine
+> has."
 
 **Live demo:**
 ```bash
 bratcode
 ```
-- Ask it to write a file → confirm prompt appears → say **no** → show nothing
-  happened
-- Ask again → say **yes** → show the file now exists
-- Ask it to delete a file → show it's refused outright, no prompt at all,
-  because blocked tools never even ask — like a child-lock, not a request
+- Ask it to write a file → confirm prompt → say **no** → nothing happened.
+- Ask again → say **yes** → file exists.
+- Ask it to delete a file → refused outright, no prompt. Blocked tools never
+  even ask. A child-lock, not a request.
 
 **Real harness check:**
 
-> "This isn't a toy pattern — it's the exact shape of Claude Code's and
-> Codex's permission systems today. Reading files, running tests, listing a
-> directory — that just happens. Editing a file or running a shell command
-> asks you first, unless you've explicitly told it to auto-accept. And you
-> can put things — force-pushing over main, `rm -rf`, merging a PR — on a
-> deny list so they never run, no matter what else you've pre-approved.
-> Same three tiers. You've probably clicked 'yes' or 'no' to one of these prompts this
-> week without thinking about which tier it was."
+> "Not a toy pattern. This is the exact shape of Claude Code's and Codex's
+> permission systems. Reading files, running tests, listing a directory:
+> just happens. Editing a file or running a shell command: asks first,
+> unless you auto-accept. Force-push over main, `rm -rf`, merging a PR: on a
+> deny list, never runs, no matter what else you pre-approved. Same three
+> tiers. You've clicked yes or no on one of these this week without
+> thinking about which tier it was."
+
+(Callback if it lands: "This is the setting I didn't have on Codex last
+week.")
 
 ---
 
-## Step 5 — Persistent Memory (5.5-6.5 min)
+## Step 5 — Persistent Memory (5.5–6.5 min)
 
-**Screen setup:** `gc5`, then `code harness/memory.ts`. It's fourteen lines —
-let that land. Point out `remember`/`recall` just read and write a JSON file
-with `fs`, no database, no cleverness.
+**Screen setup:** `gc5`, then `code harness/memory.ts`. Fourteen lines. Let
+that land. `remember`/`recall` read and write a JSON file with `fs`. No
+database. No cleverness.
 
 **Say:**
 
-> "Last thing a car has that an engine doesn't: **it remembers things across
-> trips.** Your odometer, your saved seat position, your service history —
-> none of that lives in the engine. The engine has zero memory between the
-> moment it's running and the moment it's off. Same with the model: every
-> single API call is stateless. Whatever it 'remembers' about this
-> conversation is *only* what you hand it back in the next message."
+> "Last thing a car has that an engine doesn't: **it remembers across
+> trips.** Odometer, seat position, service history. None of it lives in the
+> engine. Same with the model: every API call is stateless. Whatever it
+> 'remembers' is only what you hand it back in the next message."
 
 **Live demo:**
 ```bash
 bratcode
 ```
-- Tell it: "remember that I prefer TypeScript over Python." Quit with `exit`.
-- Run `bratcode` again — **a fresh process, a fresh engine start** — and
-  ask "what do you know about me?" It recalls the fact with zero re-prompting.
-- Show `memory.json` on screen. It's a flat text file.
+- "remember that I prefer TypeScript over Python." Quit with `exit`.
+- `bratcode` again. **Fresh process. Fresh engine start.** "what do you know
+  about me?" It recalls the fact, zero re-prompting.
+- Show `memory.json`. A flat text file.
 
-**The line to land:**
+**Land it:**
 
-> "The data structure doesn't matter — it's a JSON array, nothing clever.
-> What matters is where it lives: **outside the engine.** Anything written to
-> disk survives the engine turning off. A harness that skips this re-derives
-> the entire trip from scratch, every single time you turn the key."
+> "The data structure doesn't matter. It's a JSON array. What matters is
+> where it lives: **outside the engine.** Disk survives the engine turning
+> off. A harness that skips this re-derives the entire trip every time you
+> turn the key."
 
 **Real harness check:**
 
-> "This is precisely what `CLAUDE.md` does for Claude Code, and what
-> `AGENTS.md` does for Codex — a plain file sitting in your repo that gets
-> read back into context at the start of every session. Same idea as our
-> `memory.json`, just with a friendlier name and better marketing. If you've
-> ever wondered why these tools 'remember' your project's conventions across
-> completely separate conversations, this is the entire trick."
+> "This is `CLAUDE.md` for Claude Code and `AGENTS.md` for Codex. A plain
+> file in your repo, read back into context every session. Same idea as our
+> `memory.json`, with better marketing. If you've ever wondered why these
+> tools 'remember' your project conventions across separate conversations,
+> that's the entire trick."
 
 ---
 
-## Step 6 — Durable Execution (4-5 min)
+## Step 6 — Durable Execution (4–5 min)
 
 **Screen setup:** `gc6` (checks out `main`), then `code bin/durable.ts` and
-`code harness/checkpoint.ts` side by side — the second file is thirteen lines,
-same "let it land" beat as `memory.ts` in step 5.
+`code harness/checkpoint.ts` side by side. Thirteen lines. Same "let it
+land" beat as `memory.ts`.
 
 **Say:**
 
-> "One more thing a car has that an engine doesn't: if it stalls halfway down
-> the highway, you don't tow it back to the driveway and start the trip
-> over. You resume from wherever it stalled. Same idea here — but this time
-> it's not remembering a fact about you, it's remembering *how far through a
-> task it got.*"
+> "One more thing a car has that an engine doesn't: stall halfway down the
+> highway and you don't tow it home and start over. You resume from where
+> it stalled. Same idea here. This time it's not remembering a fact about
+> you. It's remembering *how far through a task it got.*"
 
 **Live demo:**
 ```bash
 bratcode durable
 ```
-- This runs a fixed 3-step plan — write `step1.txt`, `step2.txt`,
-  `step3.txt`. Before each step actually runs, there's a several-second
-  pause with its own spinner text ("safe to crash right now") — that pause
-  is your cue.
-- Let step 1 and step 2 finish — you'll see `[CHECKPOINT SAVED] 1/3` and
-  `2/3` print, each one written to `checkpoint.json` the instant that step
-  finished, before step 3 even starts.
-- **During step 3's pre-step pause, hit `Ctrl-C`.** Nothing has run for step
-  3 yet — that's the point of the pause, it gives you a safe, generous
-  window to kill it on cue instead of racing a fast tool call.
-- Run `bratcode durable` again. Point at the output: `checkpoint.json says:
-  2/3 steps already done` → `[SKIP] step 1` → `[SKIP] step 2` → straight to
-  `[STEP 3/3]`, which now runs and finishes cleanly.
-- Show `checkpoint.json` on screen — same flat-file idea as `memory.json`,
-  just tracking "how far" instead of "what facts."
+- Fixed 3-step plan: write `step1.txt`, `step2.txt`, `step3.txt`. Before each
+  step runs there's a several-second pause with its own spinner text ("safe
+  to crash right now"). That pause is your cue.
+- Let steps 1 and 2 finish: `[CHECKPOINT SAVED] 1/3`, `2/3`, each written to
+  `checkpoint.json` the instant that step finished.
+- **During step 3's pre-step pause, `Ctrl-C`.** Nothing has run for step 3.
+  The pause gives you a generous window instead of racing a fast tool call.
+- `bratcode durable` again. Point: `checkpoint.json says: 2/3 steps already
+  done` → `[SKIP] step 1` → `[SKIP] step 2` → straight to `[STEP 3/3]`,
+  which runs and finishes.
+- Show `checkpoint.json`. Same flat-file idea as `memory.json`, tracking
+  "how far" instead of "what facts."
 
-**Say, landing the step:**
+**Land it:**
 
-> "The crash didn't cost us the whole trip — it cost us nothing, because the
-> car wrote down exactly where it was the instant it got there. That's
-> durable execution: not 'don't crash,' but 'a crash doesn't mean starting
-> over.'"
+> "The crash cost us nothing. The car wrote down where it was the instant it
+> got there. Durable execution isn't 'don't crash.' It's 'a crash doesn't
+> mean starting over.'"
 
 **Real harness check:**
 
-> "This is the same idea behind Claude Code's own auto-compact and session
-> resume, and behind Temporal/durable-workflow engines used for long AI
-> pipelines in production — checkpoint state on the way through a multi-step
-> job, not just at the very end. Anything that can fail partway through
-> needs a definition of 'partway' that survives the failure."
+> "Claude Code's session resume and Temporal-style workflow engines do
+> exactly this: checkpoint on the way through a multi-step job, not at the
+> end. Anything that can fail partway needs a definition of 'partway' that
+> survives the failure."
 
-**Say, landing the whole build:**
+**Land the whole build:**
 
-> "Six steps, six branches worth of capability, and every single one of them
-> is a `git diff` away from proving exactly what it added. That's the
-> harness. Let's talk about who builds this stuff in practice."
+> "Six steps, six branches, and every single one is a `git diff` away from
+> proving what it added. That's the harness. Now: who builds this stuff for
+> real?"
 
 ---
 
-## The Car Manufacturers (2.5-3 min)
+## The Car Manufacturers (2.5–3 min)
 
 **Say:**
 
-> "Everything you just watched me build by hand across six steps — the
-> loop, the tiers, the odometer, the checkpoint — is what Claude Code and
-> Codex hand you as a finished car, and what LangGraph, Mastra, and every
-> agent SDK hand you as a car kit if you're building your own. That's fine!
-> Most of the time you want a factory car, not a kit car. But when it
-> breaks, or behaves in a way you didn't expect, you need to know what's
-> actually under the hood — and now you do, because you just built one from
-> parts, one git branch at a time."
+> "Everything you watched me build by hand across six steps is what Claude
+> Code and Codex hand you as a finished car, and what LangGraph, Mastra, and
+> every agent SDK hand you as a kit car. That's fine. Most days you want the
+> factory car. But when it breaks, or does something you didn't expect, you
+> need to know what's under the hood. Now you do. You built one, one branch
+> at a time."
 
-**Slide — one line each:**
-- What you built by hand today: a loop, mediated tools, a memory file, a
-  checkpointed plan — six branches, `git diff` between any two shows exactly
-  what capability was added
-- What a framework hands you for free: the same four things, pre-assembled
+**Slide — "Build vs. buy. Honest answer: mostly buy."**
+- What you built by hand tonight: a loop, mediated tools, a memory file, a
+  checkpointed plan. Six branches, one capability per `git diff`.
+- What a framework hands you free: the same four things, pre-assembled.
 - What no framework can hand you: **your** tier map, **your** memory schema,
-  **your** answer for "what happens with no driver watching"
-- One step further than today: `main` in this same repo also adds autonomous
-  mode — the harness acting with nobody typing — plus an audit trail and a
-  session budget, because "nobody's watching" should make a harness
-  *stricter*, never looser. Built and tested, not demoed today; clone it and
-  check it out yourself.
-- Next layers past even that (name-drop, don't demo): sandboxed code
-  execution, multi-agent handoffs
+  **your** answer for "what happens when nobody's watching."
+- One step further (name-drop, don't demo): `main` also has autonomous mode,
+  an audit trail, and a session budget. "Nobody's watching" should make a
+  harness *stricter*, never looser. Clone it and check it out.
+- Next layers (name-drop only): sandboxed code execution, multi-agent
+  handoffs.
 
-**The build-vs-buy answer, since someone will ask it if you don't say it
-first:**
+**Build-vs-buy, say it before someone asks:**
 
-> "So should you ever build one of these yourself? Honest answer: if the job
-> is general-purpose coding, no — use Claude Code or Codex, they've already
-> solved it better than you will this weekend. Build only the parts where
-> your business is actually different. Buy or reuse everything else."
+> "Should you ever build one yourself? General-purpose coding: no. Use
+> Claude Code or Codex. They solved it better than you will this weekend.
+> Build only the parts where your business is actually different. Buy
+> everything else."
 
-**Say, landing it with the quotable line:**
+**The quotable line:**
 
-> "Here's a way to think about it: the model is rented intelligence — anyone
-> can call the same API you do. The harness is where your company's actual
-> judgment lives — which systems it's allowed to touch, whose approval a
-> risky action needs, what your business considers a critical failure. A
-> generic harness doesn't know any of that. Yours would have to."
+> "The model is rented intelligence. Anyone can call the same API. The
+> harness is where your company's judgment lives: which systems it may
+> touch, whose approval a risky action needs, what counts as a critical
+> failure. A generic harness doesn't know your approval chain. Yours would
+> have to."
 
-**Optional, if you have the extra 30 seconds:** a one-line concrete example
-lands this better than the abstraction alone — "picture a logistics agent
-that has to decide whether a delayed shipment needs a customer email and
-whose approval that email needs. No framework ships knowing your approval
-hierarchy. That's the 10% you'd actually be building."
+**Optional, 30 seconds:** "Picture a logistics agent deciding whether a
+delayed shipment needs a customer email, and whose approval that email
+needs. No framework ships knowing your approval chain. That's the 10% you'd
+actually build."
 
 ---
 
-## Close (1-1.5 min)
+## Close (1–1.5 min)
 
-**Slide — just this line, nothing else:**
+**Slide — just this:**
 
-> "A harness isn't the model. It's the car you build around it — and every
-> part of that car is a decision someone makes on purpose, not a default you
-> inherit for free."
+> "A harness isn't the model. It's the car you build around it. Every part
+> of that car is a decision someone made on purpose, not a default you
+> inherited for free."
 
 **Say:**
 
-> "The engine is the easy part now — anyone can get API access. The car is
-> the actual job."
+> "The engine is the easy part now. Anyone can get API access. The car is
+> the job."
 
-**A live beat, not just a slide — do this before the Q&A slide comes up:**
-you're still sitting on Step 6's terminal, past `bratcode durable`'s "All
-steps complete." line — say this yourself rather than reading it off a
-slide:
+**A live beat, before the Q&A slide:** you're still on Step 6's terminal,
+past `All steps complete.` Say it, don't read it:
 
 > "Same `qwen2.5:7b` as Step 1. Only the harness around it changed."
 
-Let that sit for a second, unnarrated after you say it — don't rush straight
-into the Q&A slide.
+Let it sit a second. Don't rush into Q&A.
 
-Thank you / Q&A slide — name, links, and the repo:
-**github.com/iambharathpadhu/react-blr-harness-talk**. Say it out loud and put
-it on the slide — a good chunk of the room will clone it before you're off
-stage, and each step is a real branch they can check out one at a time.
+**Thank-you slide:** "Thanks. Go break something." Repo
+**github.com/iambharathpadhu/bratcode**, handles, and the QR to
+**iambharathpadhu.vercel.app** (which links everything). Say the repo out
+loud. Leave the QR up. Half the room clones it before you're off stage.
 
 ---
 
-## Bonus material (only if you're running fast, or during Q&A)
+## Bonus material (only if running fast, or in Q&A)
 
-Not part of the main run-of-show — pull these out only if you finish early or
-someone asks a question that opens the door.
-
-- **Path traversal demo (step 4):** ask the agent to read a path outside
-  the sandbox (`../../etc/hosts`) — show the harness throwing instead of
-  leaking it. Line: "The car has a curb it physically can't drive over, no
-  matter what the engine wants."
-- **Autonomous mode (`main`, `gc6`):** if
-  someone asks "what about when nobody's watching at all," this branch has
-  the answer — `bratcode watch`, append lines to `inbox.md`, watch it act
-  unsupervised with *stricter* tiers, and `cat audit.jsonl | jq` to show the
-  audit trail. Only pull this out if there's real time and real interest —
-  it's a two-terminal, timing-sensitive demo, not something to rush.
+- **Path traversal (step 4):** ask the agent to read `../../etc/hosts`. The
+  harness throws instead of leaking it. Line: "The car has a curb it
+  physically can't drive over, no matter what the engine wants."
+- **Autonomous mode (`main`, `gc6`):** if someone asks "what about when
+  nobody's watching at all": `bratcode watch`, append lines to `inbox.md`,
+  watch it act unsupervised with *stricter* tiers, `cat audit.jsonl | jq`
+  for the audit trail. Two terminals, timing-sensitive. Only with real time
+  and real interest.
 
 ---
 
@@ -588,7 +557,8 @@ someone asks a question that opens the door.
 
 | Section | Low | High |
 |---|---|---|
-| Cold open (audience question + analogy) | 3.5 min | 4 min |
+| Title + intro slide | 0.5 min | 0.5 min |
+| Cold open (audience question + analogy + bratcode) | 3.5 min | 4 min |
 | The engine: Ollama + qwen2.5:7b, local | 1 min | 1 min |
 | Naming the failure modes | 1.5 min | 2 min |
 | Step 1 — Bare Model (+ real-harness check) | 1.5 min | 2 min |
@@ -599,45 +569,36 @@ someone asks a question that opens the door.
 | Step 6 — Durable Execution (+ real-harness check) | 4 min | 5 min |
 | The Car Manufacturers | 2.5 min | 3 min |
 | Close | 1 min | 1.5 min |
-| **Total** | **30 min** | **37 min** |
+| **Total** | **30.5 min** | **37.5 min** |
 
-Step 6's pre-step pause (`HARNESS_STEP_PAUSE_MS`, default 4000ms) is what
-makes the Ctrl-C timing forgiving — you don't need frame-perfect timing, just
-hit it sometime during the "safe to crash" spinner text before step 3's
-`[RUN]` line prints. If you're running long, cut in this order: The Car
-Manufacturers' "next layers" namedrop first; Step 2 down to a single sentence
-with no editor glance second; tighten Step 4/5's "Say" lines third. **Never**
-cut any of the six "real harness check" lines, and never cut Step 6's
-crash-and-resume beat — it's the payoff the whole "engine has no memory"
-thread has been building toward.
+Step 6's pre-step pause (`HARNESS_STEP_PAUSE_MS`, default 4000ms) makes the
+Ctrl-C forgiving: hit it any time during the "safe to crash" spinner before
+step 3's `[RUN]` prints. Running long? Cut in this order: the Car
+Manufacturers' "next layers" name-drop; Step 2 down to one sentence with no
+editor glance; tighten Step 4/5's "Say" lines. **Never** cut a "real
+harness check" line, and never cut Step 6's crash-and-resume. It's the
+payoff the whole "engine has no memory" thread builds to.
 
 ## Pre-talk checklist
 
-- [ ] `ollama serve` running, **`qwen2.5:7b` pulled and confirmed via
-      `ollama list`** on the exact laptop you're presenting from — this is
-      the required model, not a preference (see README.md's "Model choice"
-      section for why `llama3.2:3b` is unreliable if used live)
+- [ ] `ollama serve` running, **`qwen2.5:7b` pulled and confirmed via `ollama
+      list`** on the exact laptop you present from. Required model, not a
+      preference (README explains why `llama3.2:3b` is unreliable live).
 - [ ] VS Code `code` CLI installed (Cmd+Shift+P → Shell Command: Install
       'code' command in PATH) and `demo/open-act.sh ollama` tested on that
-      same laptop — don't discover this is broken on stage
-- [ ] `npm install` run once, `./demo/install-bratcode.sh` run once,
-      `bratcode doctor` green, and `demo/check-all-branches.sh` clean on the
-      laptop you'll present from
-- [ ] `gc1` … `gc6` rehearsed at least once, so switching steps is muscle
-      memory before you're on stage
+      laptop.
+- [ ] `npm install` once, `./demo/install-bratcode.sh` once, `bratcode
+      doctor` green, `demo/check-all-branches.sh` clean.
+- [ ] `gc1` … `gc6` rehearsed until switching steps is muscle memory.
 - [ ] `memory.json`/`checkpoint.json` deleted, `sandbox/` empty, on **every**
-      branch before you start — each step needs a genuinely fresh state
-      (`gcN` does this every time it switches branches)
-- [ ] Step 6's Ctrl-C timing rehearsed at least twice — confirm you can see
-      `[CHECKPOINT SAVED] 2/3` print, then kill it during the next pause,
-      then rerun and see both `[SKIP]` lines before step 3 actually runs
-- [ ] Say the analogy table ONCE, early, then trust it — don't re-teach the
-      mapping every step, just say "the engine" / "the car" from then on
-- [ ] Say the "notice the spinner/token line" callout ONCE, in Step 1, then
-      let it just run as ambient telemetry for the rest of the talk
-- [ ] The opening audience question is capped at 30 seconds, one response,
-      then move — rehearse the pivot line so it doesn't turn into a Q&A this
-      early
-- [ ] If you plan to pull out the `main`/autonomous-mode bonus material for
-      Q&A, rehearse that separately and know it's a two-terminal, more
-      fragile demo — don't attempt it for the first time live
+      branch before you start (`gcN` does this every time).
+- [ ] Step 6's Ctrl-C rehearsed at least twice: see `[CHECKPOINT SAVED] 2/3`,
+      kill during the next pause, rerun, see both `[SKIP]` lines before step
+      3 runs.
+- [ ] Say the analogy table ONCE, early. Then just "the engine" / "the car."
+- [ ] Say the spinner/token callout ONCE, in Step 1. Then ambient.
+- [ ] Opening question capped at 30 seconds, one response, then move.
+      Rehearse the pivot line.
+- [ ] Intro slide is 10 seconds. Don't read the bio.
+- [ ] Bonus autonomous-mode demo rehearsed separately if you plan to pull
+      it out in Q&A. Two terminals, fragile. Never first time live.
