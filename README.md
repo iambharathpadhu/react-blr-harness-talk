@@ -2,7 +2,7 @@
 
 > **You're on `step-3-tools-no-permission`** — step 3 of a 6-step build.
 > Real file tools, every call runs the instant it's requested — the naive agent everyone writes first. See the full progression
-> table on [`main`](https://github.com/iambharathpadhu/react-blr-harness-talk#the-6-step-build)
+> table on [`main`](https://github.com/iambharathpadhu/bratcode#the-6-step-build)
 > or jump straight to what comes next: `bratcode step4`.
 
 A from-scratch, ~250-line agent harness built for a live conference talk. No

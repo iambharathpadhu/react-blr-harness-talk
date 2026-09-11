@@ -2,7 +2,7 @@
 // util.styleText, no chalk/picocolors) so nothing extra has to install
 // correctly on whatever laptop this gets demoed from.
 //
-// Colors mirror the slide deck's dashboard palette on purpose: the live
+// Colors mirror the slide deck's palette on purpose (electric-blue accent): the live
 // terminal and the slides should use the same green/amber/red vocabulary
 // for safe/confirm/blocked, so the room isn't learning two color systems.
 
@@ -18,7 +18,7 @@ export const ui = {
   denied: (s: string) => styleText("gray", s),
   skipped: (s: string) => styleText("yellow", s),
   dim: (s: string) => styleText("gray", s),
-  accent: (s: string) => styleText(["bold", "yellowBright"], s),
+  accent: (s: string) => styleText(["bold", "blueBright"], s), // electric blue — matches the deck
   banner: (s: string) => styleText("bold", s), // no explicit color: inherits the terminal's default so it reads on light and dark themes
   wake: (s: string) => styleText(["bold", "cyan"], s),
   checkpoint: (s: string) => styleText(["bold", "blue"], s),
@@ -36,7 +36,7 @@ export function tag(label: string): string {
 // build this is, and which engine (model) is under the hood. Boxed so it
 // reads as a title card on the projector, not just another log line.
 export function header(step: string, model: string): string {
-  const title = `harness-demo · ${step}`;
+  const title = `bratcode · ${step}`;
   const engine = `engine: ${model} · via Ollama on localhost · $0.00`;
   const inner = Math.max(title.length, engine.length) + 2;
   const line = "─".repeat(inner);
