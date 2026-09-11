@@ -64,7 +64,7 @@ One VS Code window all night. No alt-tabbing live.
   | `bratcode durable` | step 6's checkpoint / crash / resume demo |
   | `bratcode reset` | wipe state without switching branches |
 - `main` *also* carries autonomous mode, an audit trail, and a session
-  budget. Built, tested, not in tonight's script. See **Bonus material**.
+  budget. Built, tested, not in today's script. See **Bonus material**.
 
 ---
 
@@ -80,20 +80,84 @@ Say the long title once. Then straight to slide 2.
 
 ## Slide 2 — Who's talking (10 seconds, not 60)
 
-Photo, name, "Senior Software Engineer @ Chaine", three facts, handles.
+Photo, name, "Senior Software Engineer @ Chaine", one casual line. That's
+the whole slide.
 
 **Say, fast, not reading:**
 
 > "Barath. Senior engineer at Chaine. Coimbatore boy. Messi fan first,
 > engineer second. Five years of breaking things in tech and occasionally
-> learning from it. Tonight I broke an AI agent on purpose so you don't
-> have to."
+> learning from them."
 
 Move. Nobody came for the bio.
 
 ---
 
-## Cold open (3.5–4 min)
+## Slides 3–4 — Why a harness, before we build one (2 min)
+
+These two slides replace the old "next big skill" cards. They set vocabulary
+and stakes, in that order.
+
+### Slide 3 — "What is a harness?"
+
+One equation, big: **`agent = model + harness`**. Under it, four jobs, each
+mapped to a step so the room knows the build is coming:
+
+| Job | What it means | Where we build it |
+|---|---|---|
+| **Constrain** | what it may do | tool tiers, step 4 |
+| **Inform** | what it should do | system prompt, step 2 |
+| **Verify** | what it actually did | tool results, step 3 |
+| **Recover** | when it dies mid-task | memory + checkpoints, steps 5–6 |
+
+**Say:**
+
+> "The word everyone's using this year. Here's the only definition you need:
+> an agent is a model plus a harness. The model generates. The harness does
+> four jobs: constrains what it may do, informs it what it should do,
+> verifies what it actually did, and recovers when it dies mid-task. Every
+> one of those four is a step today."
+
+Source if asked: Anthropic, "Harness design for long-running application
+development" (2026).
+
+### Slide 4 — "Why build your own?"
+
+Left: **46% → 80%.** Same model, same SWE-bench, different harness (Cursor's
+agent research; METR found the same, scaffolding gains rival switching
+frontier models). Right: who's building instead of renting.
+
+- **Stripe** — Minions. 1,300+ merged PRs a week, no human wrote the code.
+- **Coinbase** — Forge. PR cycle time 150 h → 15 h.
+- **Shopify** — in-house harness, the AI-first engineering playbook.
+- **Uber, Block, Cloudflare** — their own. Not Cursor. Not Claude Code.
+
+Bottom line on the slide: "Nobody else knows your codebase, your compliance
+rules, or your approval chain."
+
+**Say:**
+
+> "Why should you care? Two reasons. One: the same model scored 46% on one
+> harness and 80% on another, on the same benchmark. Nothing about the
+> engine changed. Two: look who's building their own instead of renting.
+> Stripe's Minions merge over a thousand PRs a week with no human writing
+> code. Coinbase cut PR cycle time from 150 hours to 15. Shopify, Uber,
+> Block, Cloudflare. Same reason every time: a rented agent doesn't know
+> your codebase, your compliance rules, or who has to approve what."
+
+**Spoken only, not on the slide (the scare-story half):**
+
+> "And the other side of it: nine documented cases in fourteen months of a
+> coding agent destroying production data. Replit wiped a production
+> database in July 2025. A Cursor agent deleted a database and its backups
+> in nine seconds this April. Every one of those is a harness failure, not
+> a model failure."
+
+**Land:** "So today we build one. Six steps. Six git branches."
+
+---
+
+## Cold open (2.5–3 min)
 
 ### Ask the room first (cap at 30 seconds, ONE exchange, then move)
 
@@ -106,32 +170,6 @@ Take ONE response and pivot immediately:
 
 > "That's normal. It's one of those terms everyone absorbed by osmosis and
 > nobody defined."
-
-### Why this is worth 30 minutes of your life
-
-**Slide — "Harness engineering is the next big skill. Nobody taught you it."
-Three cards. Read them, don't add to them:**
-
-1. **The engine is a commodity.** Everyone in this room can call the same
-   model in five minutes. Nobody wins by having the engine.
-2. **Every AI tool you trust is a harness.** Claude Code, Codex, Cursor run
-   models you can rent too. They win on the car: what it may touch, what it
-   remembers, what happens when it fails.
-3. **You can't drive what you don't understand.** Black-box harness means
-   you can't debug it, can't ship it, can't tell real safety from a
-   marketing slide.
-
-**Bottom line on the slide:** "So we build one. Live. Six steps, six git
-branches. Clone it tonight, break it tomorrow."
-
-**Say (the whole pitch, 45 seconds):**
-
-> "The models are converging. Everyone gets the same engines. What's left to
-> be good at is the harness, and that discipline is maybe eighteen months
-> old. The people who get it will build the tools everyone else uses. The
-> only way I know to understand a harness is to build one. So that's the
-> next 25 minutes. Six steps, each one a real git branch you can clone
-> tonight."
 
 **Then the frame:**
 
@@ -151,14 +189,14 @@ Land the analogy table (one slide). Then the line that frames the talk:
 
 ### Slide — bratcode (15 seconds)
 
-> "Everything tonight runs on this. `bratcode`. Brat, short for Barath. Not
+> "Everything today runs on this. `bratcode`. Brat, short for Barath. Not
 > deep. One command, six git branches, one capability per branch. About 250
 > lines of TypeScript and a local model. You could write it this weekend.
 > That's the point."
 
 ### The engine: Ollama + qwen2.5:7b, on this laptop (1 min)
 
-**Slide:** "The engine tonight: qwen2.5:7b, inside Ollama, on this laptop.
+**Slide:** "The engine today: qwen2.5:7b, inside Ollama, on this laptop.
 Not the cloud." Engine art on the left; on the right: **Ollama** is the
 engine bay (a local model server on `localhost:11434`), **qwen2.5:7b** is
 the engine (7B-parameter open model, ~4.7 GB), **$0.00 / token**.
@@ -472,24 +510,28 @@ bratcode durable
 
 **Say:**
 
-> "Everything you watched me build by hand across six steps is what Claude
-> Code and Codex hand you as a finished car, and what LangGraph, Mastra, and
-> every agent SDK hand you as a kit car. That's fine. Most days you want the
+> "Everything you watched me build by hand across six steps is what
+> Anthropic ships as Claude Code and OpenAI ships as Codex: finished cars.
+> LangGraph, Mastra, and every agent SDK hand you a kit car. That's fine. Most days you want the
 > factory car. But when it breaks, or does something you didn't expect, you
 > need to know what's under the hood. Now you do. You built one, one branch
 > at a time."
 
-**Slide — "Build vs. buy. Honest answer: mostly buy."**
-- What you built by hand tonight: a loop, mediated tools, a memory file, a
-  checkpointed plan. Six branches, one capability per `git diff`.
-- What a framework hands you free: the same four things, pre-assembled.
-- What no framework can hand you: **your** tier map, **your** memory schema,
-  **your** answer for "what happens when nobody's watching."
-- One step further (name-drop, don't demo): `main` also has autonomous mode,
-  an audit trail, and a session budget. "Nobody's watching" should make a
-  harness *stricter*, never looser. Clone it and check it out.
-- Next layers (name-drop only): sandboxed code execution, multi-agent
-  handoffs.
+**Slide — "Build vs. buy." A four-row table, nothing else:**
+
+| Manufacturer | Harness | |
+|---|---|---|
+| **Anthropic** | Claude Code | finished car |
+| **OpenAI** | Codex | finished car |
+| **Cursor** | Cursor Agent | finished car |
+| LangGraph · Mastra · agent SDKs | your own build | kit car, some assembly required |
+
+One line under it: "Stripe, Shopify and Coinbase built their own. Same
+reason you will: nobody else knows your approval chain."
+
+Name-drop only, don't demo: `main` also has autonomous mode, an audit trail,
+and a session budget. "Nobody's watching" should make a harness *stricter*,
+never looser.
 
 **Build-vs-buy, say it before someone asks:**
 
@@ -515,11 +557,14 @@ actually build."
 
 ## Close (1–1.5 min)
 
-**Slide — just this:**
+**Slide — one sentence, nothing else:**
 
-> "A harness isn't the model. It's the car you build around it. Every part
-> of that car is a decision someone made on purpose, not a default you
-> inherited for free."
+> "A harness isn't the model. It's the car you build around it."
+
+The rest is spoken:
+
+> "Every part of that car is a decision someone made on purpose, not a
+> default you inherited for free."
 
 **Say:**
 
@@ -533,9 +578,9 @@ past `All steps complete.` Say it, don't read it:
 
 Let it sit a second. Don't rush into Q&A.
 
-**Thank-you slide:** "Thanks. Go break something." Repo
-**github.com/iambharathpadhu/bratcode**, handles, and the QR to
-**iambharathpadhu.vercel.app** (which links everything). Say the repo out
+**Thank-you slide:** "Questions?" on the left with the repo
+**github.com/iambharathpadhu/bratcode** and your handles; the QR to
+**iambharathpadhu.vercel.app** (which links everything) on the right. Say the repo out
 loud. Leave the QR up. Half the room clones it before you're off stage.
 
 ---
@@ -558,7 +603,8 @@ loud. Leave the QR up. Half the room clones it before you're off stage.
 | Section | Low | High |
 |---|---|---|
 | Title + intro slide | 0.5 min | 0.5 min |
-| Cold open (audience question + analogy + bratcode) | 3.5 min | 4 min |
+| What is a harness + why build your own | 2 min | 2.5 min |
+| Cold open (audience question + analogy + bratcode) | 2.5 min | 3 min |
 | The engine: Ollama + qwen2.5:7b, local | 1 min | 1 min |
 | Naming the failure modes | 1.5 min | 2 min |
 | Step 1 — Bare Model (+ real-harness check) | 1.5 min | 2 min |
@@ -569,7 +615,7 @@ loud. Leave the QR up. Half the room clones it before you're off stage.
 | Step 6 — Durable Execution (+ real-harness check) | 4 min | 5 min |
 | The Car Manufacturers | 2.5 min | 3 min |
 | Close | 1 min | 1.5 min |
-| **Total** | **30.5 min** | **37.5 min** |
+| **Total** | **31.5 min** | **38.5 min** |
 
 Step 6's pre-step pause (`HARNESS_STEP_PAUSE_MS`, default 4000ms) makes the
 Ctrl-C forgiving: hit it any time during the "safe to crash" spinner before
