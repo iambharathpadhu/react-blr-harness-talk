@@ -2,7 +2,7 @@
 
 > **You're on `step-5-persistent-memory`** — step 5 of a 6-step build.
 > A flat file on disk that survives the process exiting — quit and restart, it still remembers. See the full progression
-> table on [`main`](https://github.com/iambharathpadhu/react-blr-harness-talk#the-6-step-build)
+> table on [`main`](https://github.com/iambharathpadhu/bratcode#the-6-step-build)
 > or jump straight to what comes next: `bratcode step6`.
 
 A from-scratch, ~250-line agent harness built for a live conference talk. No
