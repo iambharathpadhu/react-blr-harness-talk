@@ -91,6 +91,20 @@ the whole slide.
 
 Move. Nobody came for the bio.
 
+### Ask the room first (cap at 30 seconds, ONE exchange, then move)
+
+**Say, and actually wait:**
+
+> "Quick show of hands. Who's confident they could define 'AI harness'
+> beyond 'the thing that wraps the model'?"
+
+Take ONE response and pivot immediately:
+
+> "That's normal. It's one of those terms everyone absorbed by osmosis and
+> nobody defined."
+
+Then slide 3.
+
 ---
 
 ## Slides 3–4 — Why a harness, before we build one (2 min)
@@ -157,21 +171,9 @@ rules, or your approval chain."
 
 ---
 
-## Cold open (2.5–3 min)
+## Cold open — the frame (2–2.5 min)
 
-### Ask the room first (cap at 30 seconds, ONE exchange, then move)
-
-**Say, and actually wait:**
-
-> "Quick show of hands. Who's confident they could define 'AI harness'
-> beyond 'the thing that wraps the model'?"
-
-Take ONE response and pivot immediately:
-
-> "That's normal. It's one of those terms everyone absorbed by osmosis and
-> nobody defined."
-
-**Then the frame:**
+**Say:**
 
 > "Everyone here has done this: you get API access to an LLM, hand it a
 > couple of tools, wire up a loop. It works. It feels like magic. Here's the
